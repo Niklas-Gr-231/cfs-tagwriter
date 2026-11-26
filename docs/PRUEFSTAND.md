@@ -1,4 +1,4 @@
-# Prüfstand der Git-Ausgabe 3.6.2
+# Prüfstand der Git-Ausgabe 3.7.0
 
 Am 26.11.2026 wurde die Git-Ausgabe lokal auf Linux mit Python 3.12 in einer
 frischen virtuellen Umgebung geprüft. Die Installation erfolgte ausschließlich
@@ -144,3 +144,15 @@ Sicherung vor Änderung, exklusives Anlegen und Rückleseprüfung bleiben erhalt
 Windows-/macOS-Softwaretests in GitHub sind keine physischen NFC-/Bluetoothtests.
 Der Release-Workflow veröffentlicht nur nach erfolgreichen Prüfungen; der jeweils
 aktuelle Stand ist im GitHub-Reiter Actions sichtbar.
+
+## App-Updates und native Pakete 3.7.0
+
+Neue isolierte Tests prüfen stabile Release-Auswahl, Architektur, SHA-256,
+Abbruch bei defekten Downloads/Starttests, unveränderte Profile, atomaren
+Versionswechsel, Rückfall bei Startfehlern und sichere Mac-Framework-Verknüpfungen.
+Der Oberflächentest öffnet die Update-Seite in beiden Designs und prüft Suche,
+Fehler, erneuten Download, Neustart-Bereitschaft sowie die Offline-Änderungsübersicht.
+Native Pakete werden vor der Veröffentlichung auf allen vier Zielplattformen
+gebaut und mit eingebauter Laufzeit, liblzma und Demofenster geprüft.
+Die jeweils konkreten erfolgreichen Läufe stehen unter GitHub Actions.
+Diese Tests bedienen keine realen Drucker, Arduino-Boards oder Bluetooth-Geräte.

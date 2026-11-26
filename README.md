@@ -4,7 +4,7 @@ Desktop-Werkzeug für eigene Filamentprofile und RFID-Aufkleber an Creality-CFS-
 Die Anwendung liest und beschreibt MIFARE-Classic-Tags über einen Arduino,
 verwaltet die Zuordnung zum Filamentprofil und erzeugt 40 × 30 mm Swatch-Etiketten.
 
-**App 3.6.2 · Druckerdienst 2.1.0 · Arduino-Bridge 1.1.0**
+**App 3.7.0 · Druckerdienst 2.1.0 · Arduino-Bridge 1.1.0**
 
 Eigener Projektcode ist unter **PolyForm Noncommercial 1.0.0** verfügbar.
 Nichtkommerzielle Nutzung, Änderungen und Weitergabe sind nach den
@@ -47,17 +47,22 @@ Das Projekt bietet folgende Funktionen.
 | Weitere Creality-CFS-/CFS-C-Modelle | Experimentell. Native Modell-, Katalog-, Düsen-, Python- und Dienststarterprüfung vor Installation. Eine passende CFS-/CFS-C-Ausrüstung bleibt erforderlich. |
 | Anycubic Kobra 3 / V2 / Max / Max V2, Kobra 4, Kobra S1 / S1 Max, Kobra X mit ACE | Getrennte Drucker-/Wechslerliste, dokumentiertes ACE-Layout und ausdrücklich freizugebende unbestätigte Formate. Keine Bestätigung am Gerät und keine Kalibrierungs-/Cloudintegration. |
 
-Für den ersten Start werden Python ab 3.10 mit Tkinter, die Python-Abhängigkeiten,
-ein unterstütztes Arduino-/RC522-Gespann und passende Aufkleber benötigt.
-Für Druckerfunktionen braucht der Rechner lokalen Netzwerkzugriff und einen
-am Drucker freigegebenen Root-/SSH-Zugang. Die Arduino- und Bibliotheksdownloads
-benötigen bei der ersten Einrichtung Internetzugriff.
+Fertige Pakete stehen unter [Releases](https://github.com/Niklas-Gr-231/cfs-tagwriter/releases/latest):
+Windows-EXE (x64), Linux-AppImage (x64) sowie macOS-DMG für Apple Silicon oder Intel.
+Diese Pakete enthalten Python und die benötigten Bibliotheken; das Git-Repository
+muss dafür nicht heruntergeladen werden.
 
-Die Einrichtung für jedes Betriebssystem ist in
-[docs/INSTALLATION.md](docs/INSTALLATION.md) beschrieben. Danach wird die App
-mit `start.bat` unter Windows oder `start.sh` unter Linux gestartet. Auf dem Mac
-kann `start.command` verwendet werden. `python start.py --check` prüft die
-Abhängigkeiten. `python start.py --demo` öffnet die Oberfläche für einen Testlauf.
+**Updates:** Einstellungen → App aktualisieren → Nach Updates suchen.
+Nach Download und erfolgreicher Prüfung die App neu starten. Einstellungen,
+Profile, Schlüsselbund-Zugänge und Tag-Sicherungen bleiben in der Benutzerablage.
+Die Änderungsübersicht erscheint nach dem Update einmalig und bleibt unter
+Hilfe → Was ist neu? verfügbar. Druckerdienst und Arduino werden separat verwaltet.
+
+Die [Installationsanleitung](docs/INSTALLATION.md) erklärt DMG, EXE, AppImage,
+Terminal-Installation und die weiterhin verfügbare Python-Ausgabe.
+Für Gerätefunktionen bleiben Arduino-/RC522-Hardware, passende Tags,
+USB-/Bluetooth-Berechtigungen und ein erreichbarer, unterstützter Drucker nötig.
+Unsignierte Downloads können eine Betriebssystemfreigabe benötigen.
 
 Eine ausführliche, neutrale Projektvorstellung steht in [docs/GITHUB-BESCHREIBUNG.md](docs/GITHUB-BESCHREIBUNG.md).
 

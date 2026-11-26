@@ -183,6 +183,22 @@ with tempfile.TemporaryDirectory() as directory,patch('cfs_desktop.refresh_menu_
   app.help_menu.invoke(index);settle();assert destination.read_bytes()==sample_bytes()
   dialogs['filedialog'].asksaveasfilename=save_picker
   app.bridge=reader
+  # App update page uses background operations and preserves the selected tag.
+  from cfs_versions import APP_VERSION
+  selected_uid=app.uid;selected_amount=app.weight_var.get()
+  app.show_app_updates();settle();fields=app.update_page_fields
+  with patch('cfs_update_ui.check_release',side_effect=ValueError('Simulated offline')):
+   fields['search'].invoke();idle();assert 'Simulated offline' in fields['status'].get()
+  offered={'available':True,'version':'99.0.0','size':1024,'notes':'Synthetic release notes'}
+  with patch('cfs_update_ui.check_release',return_value=offered):
+   fields['search'].invoke();idle();assert '99.0.0 verfügbar' in fields['status'].get()
+  with patch('cfs_update_ui.stage_release',side_effect=ValueError('Simulated checksum error')):
+   fields['install'].invoke();idle();assert 'erneut' in fields['install'].cget('text')
+  with patch('cfs_update_ui.stage_release',return_value={'version':'99.0.0'}):
+   fields['install'].invoke();idle();assert 'neu starten' in fields['install'].cget('text')
+  assert app.uid==selected_uid and app.weight_var.get()==selected_amount
+  shot('app-updates-'+mode+'.png');app.close_main_page();settle()
+  notes_window=app.show_release_notes();settle();assert 'Was ist neu?' in notes_window.title();notes_window.destroy()
   from cfs_labels import document
   from cfs_label_ui import show
   docs=[document(profile,registry.printer)]

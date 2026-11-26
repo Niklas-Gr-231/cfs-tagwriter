@@ -100,3 +100,22 @@ Hersteller-Gcode und Fotos wurden weggelassen. Zuschreibung und Angaben zu den
 Die Originalmodellseiten waren während dieser Prüfung nicht direkt abrufbar;
 Urheber- und Lizenzangaben wurden aus der bereitgestellten Datei übernommen.
 Es wird keine eigene Urheberschaft am Fremdmodell behauptet.
+
+## Native Desktop-Pakete
+
+Die Pakete enthalten Python und abhängige Bibliotheken. Deren Lizenztexte und
+Versionsliste liegen zusätzlich in `runtime-licenses` im Paket. Insbesondere
+PyInstaller (GPL mit Bootloader-Ausnahme), Python (PSF), Tcl/Tk, cryptography,
+Paramiko, pyserial, Keyring, Bleak, Pillow und Certifi behalten ihre eigenen Lizenzen.
+Certifi enthält Mozilla-CA-Zertifikate (MPL 2.0).
+
+liblzma wird aus dem unveränderten XZ-Utils-5.8.4-Release gebaut, SHA-256 der
+Quelle im Bauwerkzeug festgelegt. Nur die Bibliothek wird verteilt, keine
+XZ-Kommandozeilenprogramme. XZ-COPYING und 0BSD-Text liegen im Paket.
+Quelle: https://github.com/tukaani-project/xz/releases/tag/v5.8.4
+
+Das Linux-AppImage verwendet den Runtime-Teil von appimagetool 1.9.1
+(MIT; statisch eingebundene Fremdbibliotheken behalten ihre Lizenzen, darunter libfuse unter LGPL).
+Quelle und Lizenz: https://github.com/AppImage/type2-runtime
+Bauwerkzeug: https://github.com/AppImage/appimagetool/releases/tag/1.9.1
+Die App-Lizenz ändert diese Fremdlizenzen nicht.

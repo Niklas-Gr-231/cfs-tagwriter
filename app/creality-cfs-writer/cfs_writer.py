@@ -304,6 +304,7 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
                 root.configure(menu=menubar)
             help_menu = tk.Menu(menubar, tearoff=False)
             self.help_menu = help_menu
+            help_menu.add_command(label='Was ist neu? · Änderungsübersicht…', command=self.show_release_notes)
             help_menu.add_command(label='Arduino-Bauanleitung und Schaltplan…', command=self.show_hardware_guide)
             help_menu.add_command(label='Beispielplatte herunterladen… (.3mf)', command=self.export_sample_plate)
             help_menu.add_command(label='SSH-Zugang am Drucker aktivieren…', command=self.show_ssh_help)
@@ -312,6 +313,7 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
             self.settings_menu = tk.Menu(menubar,tearoff=False)
             for title, index in (('Druckersoftware und Dienstverwaltung…',0),('Arduino und IDE-Backup…',1),('Info – Funktionen und Unterstützung…',2)):
                 self.settings_menu.add_command(label=title,command=lambda index=index:self.show_setup(index),state='disabled' if demo else 'normal')
+            self.settings_menu.add_command(label='App aktualisieren…',command=self.show_app_updates)
             menubar.add_cascade(label='Einstellungen',menu=self.settings_menu)
             if not hasattr(self, 'printer_menu'):
                 self.printer_menu = tk.Menu(menubar, tearoff=False)
@@ -577,10 +579,20 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
                     if refresh_menu_icon(Path(__file__).resolve().parent):self.log('Mint-Menüsymbol auf das neue Appsymbol aktualisiert.')
                 except OSError:self.log('Menüsymbol konnte nicht aktualisiert werden; bei Bedarf den Mint-Menüstarter erneut installieren.')
             self._schedule_events(200)
+            from cfs_update_ui import notify_after_update
+            notify_after_update(self,tk,ttk)
             if self.registry is not None and not needs_setup:
                 root.after(0,lambda:self.run_operation('Drucker-Firmware und Profile werden geprüft…',self.load_initial_printer,self.initial_printer_loaded))
             if not self.ui_settings.get('first_start_notice_acknowledged', False):
                 root.after_idle(self.show_first_start_notice)
+
+        def show_app_updates(self):
+            from cfs_update_ui import show_updates
+            return show_updates(self,tk,ttk,dialogs)
+
+        def show_release_notes(self):
+            from cfs_update_ui import show_notes
+            return show_notes(self,tk,ttk)
 
         def load_initial_printer(self):
             result = {'firmware': None, 'firmware_error': '', 'materials': None, 'error': None}
@@ -2268,6 +2280,7 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
             if hasattr(self,'settings_menu'):
                 for index in range(3):
                     self.settings_menu.entryconfigure(index,state='disabled' if demo or self.busy or self.close_pending else 'normal')
+                self.settings_menu.entryconfigure(3,state='disabled' if self.busy or self.close_pending else 'normal')
             connected = self.bridge is not None
             configure(self.connect_button,text="Trennen" if connected else "Verbinden")
             if not self.busy and not self.close_pending:
@@ -2411,7 +2424,14 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
                         if item==self._operation_id:latest=result
                         continue
                     if kind=='log':self.log(str(item));continue
-                    if kind=='closed':self.root.destroy();return
+                    if kind=='closed':
+                        receipt=getattr(self,'pending_app_update',None)
+                        if receipt:
+                            from cfs_updates import launch_updated
+                            try:launch_updated(receipt,self.data_dir,demo)
+                            except (OSError,ValueError) as error:
+                                dialogs['messagebox'].showerror('Neustart fehlgeschlagen',str(error)+'\nBitte die bisherige App erneut öffnen.',parent=self.root)
+                        self.root.destroy();return
                     if latest is not None:self.display_progress(latest);latest=None
                     self.busy=False
                     self.finish_progress(kind!='error' and not (isinstance(result,dict) and 'error' in result))
@@ -2647,6 +2667,10 @@ def main(argv=None):
     parser.add_argument("--demo", action="store_true", help="Oberfläche ohne USB-Hardware und ohne echte Schreibzugriffe testen")
     parser.add_argument("--registry", type=Path, default=None, help="Feste Benutzerprofil-Zuordnung; Standard: profil-zuordnung.json neben dem Programm")
     args = parser.parse_args(argv)
+    from cfs_updates import redirect_to_update
+    from cfs_versions import APP_VERSION
+    update_data=Path(os.environ.get('CFS_APP_DATA', args.registry.parent if args.registry else Path(__file__).resolve().parent))
+    if redirect_to_update(APP_VERSION,update_data,args.demo):return 0
     try:
         import tkinter as tk
         from tkinter import colorchooser, filedialog, messagebox, ttk

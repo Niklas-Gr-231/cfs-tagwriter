@@ -1,0 +1,57 @@
+name: Desktop packages
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            key: linux-x86_64
+            extension: AppImage
+          - os: windows-latest
+            key: windows-x86_64
+            extension: exe
+          - os: macos-15
+            key: macos-arm64
+            extension: zip
+          - os: macos-15-intel
+            key: macos-x86_64
+            extension: zip
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y xvfb python3-tk
+      - run: python -m pip install -r requirements-build.txt
+      - name: Build native package
+        run: python tools/build_native.py --work ../native-work --output ../native-assets
+      - name: Check packaged runtime and demo
+        shell: bash
+        env:
+          PACKAGE_KEY: ${{ matrix.key }}
+          PACKAGE_EXTENSION: ${{ matrix.extension }}
+        run: |
+          PACKAGE=$(find ../native-assets -maxdepth 1 -name "*_${PACKAGE_KEY}.${PACKAGE_EXTENSION}" -print -quit)
+          test -n "$PACKAGE"
+          if [ "$RUNNER_OS" = Linux ]; then
+            xvfb-run -a --server-args="-screen 0 1500x1150x24" python tools/test_native.py "$PACKAGE"
+          else
+            python tools/test_native.py "$PACKAGE"
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-${{ matrix.key }}
+          path: ../native-assets/*
+          if-no-files-found: error
+          retention-days: 14

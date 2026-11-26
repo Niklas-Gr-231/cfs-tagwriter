@@ -102,3 +102,21 @@ python tools/build_distribution.py ../release-assets --tag v3.6.1
 
 Der Zielordner muss leer sein und außerhalb des Repositorys liegen. Ein solcher
 lokaler Bau ist keine Erlaubnis, die Dateien öffentlich hochzuladen.
+
+## Native Pakete ab 3.7.0
+
+Der Freigabeablauf ruft zusätzlich `native.yml` auf: Ubuntu 22.04 x64,
+Windows x64, macOS 15 ARM und macOS 15 Intel. Jeder Job baut auf dem Zielsystem,
+prüft das fertige Paket per `--check` (einschließlich liblzma), startet das
+Demofenster ohne Gerätezugriffe und stellt erst danach seine Artefakte bereit.
+Alle sechs Installations-/Update-Dateien müssen vollständig und korrekt geprüft
+sein, bevor der Release-Job sie veröffentlicht. Kein Cross-Compile-Versprechen.
+`tools/finalize_release.py` ergänzt alle nativen Dateien und berechnet die
+vollständigen Prüfsummen neu. Vorhandene Releases werden weiterhin nie ersetzt.
+
+Lokal: `python -m pip install -r requirements-build.txt`, dann
+`python tools/build_native.py --work <Bauordner-außerhalb-des-Repos> --output <Paketordner-außerhalb-des-Repos>`.
+C/C++-Compiler und Internet für die anhand fester SHA-256 geprüften XZ-/AppImage-
+Bauwerkzeuge sind nötig. Die zusätzlichen Bauwerkzeuge gehören nicht zur
+normalen App-Installation. Physische USB-/Bluetooth-Gerätetests sind getrennt
+von Paket- und Oberflächentests durchzuführen.

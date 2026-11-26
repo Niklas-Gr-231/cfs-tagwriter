@@ -1,5 +1,70 @@
 # Installation auf Windows, Linux und macOS
 
+## Fertige Anwendung ohne Python-Installation
+
+Die zur Rechnerarchitektur passende Datei aus dem
+[aktuellen Release](https://github.com/Niklas-Gr-231/cfs-tagwriter/releases/latest)
+herunterladen. Ein Git-Checkout ist nicht nötig. Die nativen Pakete enthalten
+Python, Tk, USB-/SSH-/Bluetooth-Bibliotheken, liblzma für T50M Pro, Schriften,
+Schaltpläne, Beispielplatte und Lizenztexte.
+
+- **Windows x64:** `CFS_Tagwriter_<Version>_windows-x86_64.exe` in einen dauerhaften
+  eigenen Ordner legen und öffnen. Python wird nicht benötigt. Eine Verknüpfung
+  auf diese EXE bleibt auch nach Updates nutzbar. Das Paket ist portabel, kein MSI.
+- **Linux x64:** `CFS_Tagwriter_<Version>_linux-x86_64.AppImage` herunterladen,
+  in den Dateieigenschaften als ausführbar markieren und öffnen.
+  Im Terminal alternativ `chmod +x CFS_Tagwriter_*.AppImage` und Datei starten.
+  Ohne FUSE: `APPIMAGE_EXTRACT_AND_RUN=1 ./CFS_Tagwriter_<Version>_linux-x86_64.AppImage`.
+  Basis: Ubuntu 22.04 oder neuer / entsprechende Mint-Version mit grafischer Sitzung.
+- **macOS:** DMG für `arm64` (Apple Silicon) oder `x86_64` (Intel) öffnen und
+  „CFS Tagwriter.app“ nach Programme ziehen. Die ZIP mit derselben Architektur
+  ist das Paket für den integrierten Updater. Zielbasis: macOS 15 oder neuer.
+  macOS fragt beim Bluetoothzugriff nach Zustimmung. Unsignierte Pakete können
+  eine ausdrückliche Freigabe unter Systemeinstellungen → Datenschutz & Sicherheit
+  benötigen. Kein Apple Developer ID / keine Notarisierung ist eingerichtet;
+  Sicherheitsprüfungen werden nicht deaktiviert. Windows kann SmartScreen anzeigen.
+
+Optional per Mac-Terminal in `~/Applications` installieren:
+
+```sh
+curl -fL https://github.com/Niklas-Gr-231/cfs-tagwriter/releases/latest/download/install-macos.sh -o /tmp/cfs-install-macos.sh
+sh /tmp/cfs-install-macos.sh
+```
+
+Der Installer erkennt Intel/Apple Silicon, lädt die veröffentlichte DMG samt
+SHA-256-Prüfsumme und kopiert die App ins eigene Programme-Verzeichnis.
+Eine bestehende Installation wird nicht überschrieben; dafür den App-Updater nutzen.
+
+## Updates in der App
+
+**Einstellungen → App aktualisieren → Nach Updates suchen** funktioniert mit
+allen drei nativen Paketen. Download und Prüfung laufen im Hintergrund.
+Nur stabile veröffentlichte Versionen des Projekt-Repositorys werden angeboten.
+Die App prüft Rechnerarchitektur, Dateigröße, GitHub-SHA-256 und einen Starttest.
+Anschließend bewusst **Update anwenden und neu starten** wählen.
+Offene Geräteverbindungen werden vorher geschlossen. Ein laufender Schreib- oder
+Installationsvorgang muss beendet sein. Es gibt keine automatische Geräteaktualisierung.
+
+Die neue Version wird unter `data/updates/<Version>-<Kennung>` in der Benutzerablage
+installiert, nicht über die gerade laufende EXE/AppImage/App geschrieben.
+Dadurch entstehen keine Windows-Dateisperren und keine Administratorabfragen.
+Der vorhandene Starter leitet beim nächsten Öffnen zur aktualisierten Version weiter.
+Die bisherige App und ältere Releases bleiben erhalten.
+Im Fehlerfall vor Aktivierung bleibt die alte App unverändert; bei einem beschädigten
+Update startet der alte Starter seine ursprüngliche Version. Rückkehr zu einer alten
+Version: App schließen, `app-update.json` in der Benutzerablage umbenennen und die
+alte Original-App starten. Die neuere Original-App leitet nicht auf eine ältere um.
+Benutzerdaten werden nicht zurückgesetzt. Alte Update-Unterordner nur bei geschlossener
+App entfernen, wenn sie nicht mehr in `app-update.json` als aktive Version stehen.
+
+Nach dem Update erscheint die Änderungsübersicht einmalig. **Hilfe → Was ist neu?**
+zeigt sie jederzeit erneut an. Keine Update-Suche beim Start und keine Telemetrie;
+GitHub wird erst beim Klick auf „Nach Updates suchen“ kontaktiert.
+Auch die Python-Ausgabe kann über diesen Weg zu einem nativen Paket wechseln;
+ihre bisherige Datenablage bleibt dabei erhalten.
+
+## Quellcode / Python-Ausgabe
+
 Python ab 3.10 mit Tkinter und pip verwenden. Python 3.12 ist eine geeignete
 gemeinsame Ausgangsbasis. Die App läuft im Benutzerkonto. Ein virtueller
 Python-Ordner hält die Abhängigkeiten vom übrigen System getrennt.
