@@ -1,0 +1,44 @@
+#!/bin/sh
+# Standalone CFS profile service. Never stops a printer or MCU process.
+PYTHON=/usr/bin/python3
+SCRIPT=/mnt/UDISK/printer_data/config/cfs_cloud_profiles/cloud_service.py
+CONFIG=/mnt/UDISK/printer_data/config/cfs_cloud_profiles
+PIDFILE=/var/run/cfs-cloud-profiles.pid
+LOG=/tmp/cfs-cloud-profiles.log
+BOOT=/etc/init.d/S99cfs-cloud-profiles
+SELF=/etc/init.d/cfs-cloud-profiles
+
+is_ours() {
+    [ -f "$PIDFILE" ] || return 1
+    pid=$(cat "$PIDFILE")
+    case "$pid" in ''|*[!0-9]*) return 1;; esac
+    [ -r "/proc/$pid/cmdline" ] || return 1
+    tr '\000' '\n' < "/proc/$pid/cmdline" | grep -Fx -- "$SCRIPT" >/dev/null || return 1
+    tr '\000' '\n' < "/proc/$pid/cmdline" | grep -Fx -- '--run' >/dev/null || return 1
+}
+start_service() {
+    is_ours && return 0
+    nohup "$PYTHON" "$SCRIPT" --run --config "$CONFIG" </dev/null >>"$LOG" 2>&1 &
+    echo "$!" > "$PIDFILE"
+    sleep 1
+    is_ours
+}
+stop_service() {
+    if ! is_ours; then rm -f "$PIDFILE"; return 0; fi
+    kill -TERM "$pid" || return 1
+    count=0
+    while is_ours && [ "$count" -lt 15 ]; do sleep 1; count=$((count+1)); done
+    is_ours && return 1
+    rm -f "$PIDFILE"
+}
+case "$1" in
+    start) start_service;;
+    stop) stop_service;;
+    restart) stop_service && start_service;;
+    status) is_ours && { printf 'running\n'; exit 0; }; printf 'stopped\n'; exit 1;;
+    enable)
+        if [ -e "$BOOT" ] || [ -L "$BOOT" ]; then [ "$(readlink "$BOOT")" = "$SELF" ]; else ln -s "$SELF" "$BOOT"; fi;;
+    disable)
+        if [ -L "$BOOT" ] && [ "$(readlink "$BOOT")" = "$SELF" ]; then rm -f "$BOOT"; fi;;
+    *) printf 'Usage: %s start|stop|restart|status|enable|disable\n' "$0"; exit 2;;
+esac

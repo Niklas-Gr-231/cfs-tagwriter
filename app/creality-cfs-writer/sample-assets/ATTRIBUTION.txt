@@ -1,0 +1,25 @@
+Filament Swatch · Musterplatte für 40 × 30 mm Etiketten
+
+Remix „Filament swatch“: Mr.Brom
+https://makerworld.com/en/models/1151175-filament-swatch
+Original „Filament sample“: 9percent
+https://makerworld.com/models/37649
+
+Lizenzangabe der bereitgestellten Quelldatei: BY-NC-SA.
+Die Datei nennt keine Versionsnummer. Lizenzhinweis und Urhebernennung sind
+beibehalten. Diese technisch bereinigte Ausgabe und die daran vorgenommenen
+Änderungen werden unter CC BY-NC-SA 4.0 weitergegeben:
+https://creativecommons.org/licenses/by-nc-sa/4.0/
+Vollständiger Lizenztext: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.txt
+Die PolyForm-Lizenz des App-Codes gilt nicht für dieses Fremdmodell.
+
+Änderungen für die Weitergabe:
+Vier Muster und ihre Positionen unverändert aus der bereitgestellten Platte
+übernommen. Geometrie in eigenständige Standard-3MF-Objekte umgepackt;
+persönliche Profile, Dateipfade, Projekt-/Gerätekennungen, Vorschaubilder,
+Hersteller-Startcodes und Slicereinstellungen nicht übernommen.
+Die technische Aufbereitung beansprucht keine Urheberschaft am Originalmodell.
+
+Im Slicer: Drucker, passende Druckplatte, Düse und eigenes kalibriertes Filament
+wählen, bei Bedarf an die eigene Plattengröße anordnen und neu slicen.
+Die 3MF enthält keine fertigen Druckbefehle und keine Kalibrierung.

@@ -1,0 +1,87 @@
+name: Version freigeben
+
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Freigegebene App-Version, z. B. v3.6.1'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.event.inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - id: version
+        env:
+          RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
+        run: |
+          python - <<'PY'
+          import os, sys
+          from pathlib import Path
+          sys.path.insert(0, 'tools')
+          from build_distribution import release_versions, release_notes
+          values = release_versions(os.environ['RELEASE_TAG'])
+          release_notes(values['APP_VERSION'])
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as stream:
+              stream.write('tag=v'+values['APP_VERSION']+'\n')
+          PY
+
+  checks:
+    needs: version
+    uses: ./.github/workflows/tests.yml
+    permissions:
+      contents: read
+
+  publish:
+    needs: [version, checks]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Geprüfte Pakete bauen
+        env:
+          RELEASE_TAG: ${{ needs.version.outputs.tag }}
+        run: python tools/build_distribution.py ../release-assets --tag "$RELEASE_TAG"
+      - name: Version und ältere Releases erhalten
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ needs.version.outputs.tag }}
+          RELEASE_COMMIT: ${{ github.sha }}
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo 'Dieses Release existiert bereits. Es wird nicht überschrieben.'
+            exit 1
+          fi
+          if git show-ref --verify --quiet "refs/tags/$RELEASE_TAG"; then
+            test "$(git rev-parse "$RELEASE_TAG^{commit}")" = "$RELEASE_COMMIT"
+            gh release create "$RELEASE_TAG" --verify-tag --draft --title "CFS Tagwriter $RELEASE_TAG" --notes-file ../release-assets/RELEASE-NOTES.md
+          else
+            gh release create "$RELEASE_TAG" --target "$RELEASE_COMMIT" --draft --title "CFS Tagwriter $RELEASE_TAG" --notes-file ../release-assets/RELEASE-NOTES.md
+          fi
+          gh release upload "$RELEASE_TAG" ../release-assets/*
+          gh release edit "$RELEASE_TAG" --draft=false --latest

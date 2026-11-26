@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1640" height="1060" viewBox="0 0 1640 1060">
+<title>Spannungsteiler und Widerstandsfarben</title>
+<metadata>Original project artwork. PolyForm Noncommercial 1.0.0. https://polyformproject.org/licenses/noncommercial/1.0.0</metadata>
+<rect width="100%" height="100%" fill="#FFFFFF"/>
+<rect x="40" y="35" width="1560" height="95" rx="16" fill="#F2F5F8" stroke="none" />
+<text x="65" y="74" font-family="DejaVu Sans,sans-serif" font-size="29" fill="#233044" font-weight="bold" text-anchor="start" >Ein Spannungsteiler im Detail</text>
+<text x="65" y="107" font-family="DejaVu Sans,sans-serif" font-size="17" fill="#526276" font-weight="normal" text-anchor="start" >Diesen Aufbau viermal verwenden · jeder Arduino-Ausgang bekommt einen eigenen Teiler</text>
+<rect x="390" y="180" width="790" height="520" rx="17" fill="#EFF0EC" stroke="#BFC4BF" />
+<circle cx="470" cy="235" r="5" fill="#858D83" stroke="none" data-node="detail:a1"/>
+<circle cx="470" cy="285" r="5" fill="#858D83" stroke="none" data-node="detail:b1"/>
+<circle cx="470" cy="335" r="5" fill="#858D83" stroke="none" data-node="detail:c1"/>
+<circle cx="470" cy="385" r="5" fill="#858D83" stroke="none" data-node="detail:d1"/>
+<circle cx="470" cy="435" r="5" fill="#858D83" stroke="none" data-node="detail:e1"/>
+<circle cx="470" cy="525" r="5" fill="#858D83" stroke="none" data-node="detail:f1"/>
+<circle cx="470" cy="555" r="5" fill="#858D83" stroke="none" data-node="detail:g1"/>
+<circle cx="470" cy="585" r="5" fill="#858D83" stroke="none" data-node="detail:h1"/>
+<circle cx="470" cy="615" r="5" fill="#858D83" stroke="none" data-node="detail:i1"/>
+<circle cx="470" cy="645" r="5" fill="#858D83" stroke="none" data-node="detail:j1"/>
+<text x="470" y="207" font-family="DejaVu Sans,sans-serif" font-size="15" fill="#536271" font-weight="normal" text-anchor="middle" >1</text>
+<circle cx="555" cy="235" r="5" fill="#858D83" stroke="none" data-node="detail:a2"/>
+<circle cx="555" cy="285" r="5" fill="#858D83" stroke="none" data-node="detail:b2"/>
+<circle cx="555" cy="335" r="5" fill="#858D83" stroke="none" data-node="detail:c2"/>
+<circle cx="555" cy="385" r="5" fill="#858D83" stroke="none" data-node="detail:d2"/>
+<circle cx="555" cy="435" r="5" fill="#858D83" stroke="none" data-node="detail:e2"/>
+<circle cx="555" cy="525" r="5" fill="#858D83" stroke="none" data-node="detail:f2"/>
+<circle cx="555" cy="555" r="5" fill="#858D83" stroke="none" data-node="detail:g2"/>
+<circle cx="555" cy="585" r="5" fill="#858D83" stroke="none" data-node="detail:h2"/>
+<circle cx="555" cy="615" r="5" fill="#858D83" stroke="none" data-node="detail:i2"/>
+<circle cx="555" cy="645" r="5" fill="#858D83" stroke="none" data-node="detail:j2"/>
+<text x="555" y="207" font-family="DejaVu Sans,sans-serif" font-size="15" fill="#536271" font-weight="normal" text-anchor="middle" >2</text>
+<circle cx="640" cy="235" r="5" fill="#858D83" stroke="none" data-node="detail:a3"/>
+<circle cx="640" cy="285" r="5" fill="#858D83" stroke="none" data-node="detail:b3"/>
+<circle cx="640" cy="335" r="5" fill="#858D83" stroke="none" data-node="detail:c3"/>
+<circle cx="640" cy="385" r="5" fill="#858D83" stroke="none" data-node="detail:d3"/>
+<circle cx="640" cy="435" r="5" fill="#858D83" stroke="none" data-node="detail:e3"/>
+<circle cx="640" cy="525" r="5" fill="#858D83" stroke="none" data-node="detail:f3"/>
+<circle cx="640" cy="555" r="5" fill="#858D83" stroke="none" data-node="detail:g3"/>
+<circle cx="640" cy="585" r="5" fill="#858D83" stroke="none" data-node="detail:h3"/>
+<circle cx="640" cy="615" r="5" fill="#858D83" stroke="none" data-node="detail:i3"/>
+<circle cx="640" cy="645" r="5" fill="#858D83" stroke="none" data-node="detail:j3"/>
+<text x="640" y="207" font-family="DejaVu Sans,sans-serif" font-size="15" fill="#536271" font-weight="normal" text-anchor="middle" >3</text>
+<circle cx="725" cy="235" r="5" fill="#858D83" stroke="none" data-node="detail:a4"/>
+<circle cx="725" cy="285" r="5" fill="#858D83" stroke="none" data-node="detail:b4"/>
+<circle cx="725" cy="335" r="5" fill="#858D83" stroke="none" data-node="detail:c4"/>
+<circle cx="725" cy="385" r="5" fill="#858D83" stroke="none" data-node="detail:d4"/>
+<circle cx="725" cy="435" r="5" fill="#858D83" stroke="none" data-node="detail:e4"/>
+<circle cx="725" cy="525" r="5" fill="#858D83" stroke="none" data-node="detail:f4"/>
+<circle cx="725" cy="555" r="5" fill="#858D83" stroke="none" data-node="detail:g4"/>
+<circle cx="725" cy="585" r="5" fill="#858D83" stroke="none" data-node="detail:h4"/>
+<circle cx="725" cy="615" r="5" fill="#858D83" stroke="none" data-node="detail:i4"/>
+<circle cx="725" cy="645" r="5" fill="#858D83" stroke="none" data-node="detail:j4"/>
+<text x="725" y="207" font-family="DejaVu Sans,sans-serif" font-size="15" fill="#536271" font-weight="normal" text-anchor="middle" >4</text>
+<circle cx="810" cy="235" r="5" fill="#858D83" stroke="none" data-node="detail:a5"/>
+<circle cx="810" cy="285" r="5" fill="#858D83" stroke="none" data-node="detail:b5"/>
+<circle cx="810" cy="335" r="5" fill="#858D83" stroke="none" data-node="detail:c5"/>
+<circle cx="810" cy="385" r="5" fill="#858D83" stroke="none" data-node="detail:d5"/>
+<circle cx="810" cy="435" r="5" fill="#858D83" stroke="none" data-node="detail:e5"/>
+<circle cx="810" cy="525" r="5" fill="#858D83" stroke="none" data-node="detail:f5"/>
+<circle cx="810" cy="555" r="5" fill="#858D83" stroke="none" data-node="detail:g5"/>
+<circle cx="810" cy="585" r="5" fill="#858D83" stroke="none" data-node="detail:h5"/>
+<circle cx="810" cy="615" r="5" fill="#858D83" stroke="none" data-node="detail:i5"/>
+<circle cx="810" cy="645" r="5" fill="#858D83" stroke="none" data-node="detail:j5"/>
+<text x="810" y="207" font-family="DejaVu Sans,sans-serif" font-size="15" fill="#536271" font-weight="normal" text-anchor="middle" >5</text>
+<circle cx="895" cy="235" r="5" fill="#858D83" stroke="none" data-node="detail:a6"/>
+<circle cx="895" cy="285" r="5" fill="#858D83" stroke="none" data-node="detail:b6"/>
+<circle cx="895" cy="335" r="5" fill="#858D83" stroke="none" data-node="detail:c6"/>
+<circle cx="895" cy="385" r="5" fill="#858D83" stroke="none" data-node="detail:d6"/>
+<circle cx="895" cy="435" r="5" fill="#858D83" stroke="none" data-node="detail:e6"/>
+<circle cx="895" cy="525" r="5" fill="#858D83" stroke="none" data-node="detail:f6"/>
+<circle cx="895" cy="555" r="5" fill="#858D83" stroke="none" data-node="detail:g6"/>
+<circle cx="895" cy="585" r="5" fill="#858D83" stroke="none" data-node="detail:h6"/>
+<circle cx="895" cy="615" r="5" fill="#858D83" stroke="none" data-node="detail:i6"/>
+<circle cx="895" cy="645" r="5" fill="#858D83" stroke="none" data-node="detail:j6"/>
+<text x="895" y="207" font-family="DejaVu Sans,sans-serif" font-size="15" fill="#536271" font-weight="normal" text-anchor="middle" >6</text>
+<circle cx="980" cy="235" r="5" fill="#858D83" stroke="none" data-node="detail:a7"/>
+<circle cx="980" cy="285" r="5" fill="#858D83" stroke="none" data-node="detail:b7"/>
+<circle cx="980" cy="335" r="5" fill="#858D83" stroke="none" data-node="detail:c7"/>
+<circle cx="980" cy="385" r="5" fill="#858D83" stroke="none" data-node="detail:d7"/>
+<circle cx="980" cy="435" r="5" fill="#858D83" stroke="none" data-node="detail:e7"/>
+<circle cx="980" cy="525" r="5" fill="#858D83" stroke="none" data-node="detail:f7"/>
+<circle cx="980" cy="555" r="5" fill="#858D83" stroke="none" data-node="detail:g7"/>
+<circle cx="980" cy="585" r="5" fill="#858D83" stroke="none" data-node="detail:h7"/>
+<circle cx="980" cy="615" r="5" fill="#858D83" stroke="none" data-node="detail:i7"/>
+<circle cx="980" cy="645" r="5" fill="#858D83" stroke="none" data-node="detail:j7"/>
+<text x="980" y="207" font-family="DejaVu Sans,sans-serif" font-size="15" fill="#536271" font-weight="normal" text-anchor="middle" >7</text>
+<circle cx="1065" cy="235" r="5" fill="#858D83" stroke="none" data-node="detail:a8"/>
+<circle cx="1065" cy="285" r="5" fill="#858D83" stroke="none" data-node="detail:b8"/>
+<circle cx="1065" cy="335" r="5" fill="#858D83" stroke="none" data-node="detail:c8"/>
+<circle cx="1065" cy="385" r="5" fill="#858D83" stroke="none" data-node="detail:d8"/>
+<circle cx="1065" cy="435" r="5" fill="#858D83" stroke="none" data-node="detail:e8"/>
+<circle cx="1065" cy="525" r="5" fill="#858D83" stroke="none" data-node="detail:f8"/>
+<circle cx="1065" cy="555" r="5" fill="#858D83" stroke="none" data-node="detail:g8"/>
+<circle cx="1065" cy="585" r="5" fill="#858D83" stroke="none" data-node="detail:h8"/>
+<circle cx="1065" cy="615" r="5" fill="#858D83" stroke="none" data-node="detail:i8"/>
+<circle cx="1065" cy="645" r="5" fill="#858D83" stroke="none" data-node="detail:j8"/>
+<text x="1065" y="207" font-family="DejaVu Sans,sans-serif" font-size="15" fill="#536271" font-weight="normal" text-anchor="middle" >8</text>
+<text x="420" y="240" font-family="DejaVu Sans,sans-serif" font-size="17" fill="#536271" font-weight="normal" text-anchor="start" >a</text>
+<text x="420" y="290" font-family="DejaVu Sans,sans-serif" font-size="17" fill="#536271" font-weight="normal" text-anchor="start" >b</text>
+<text x="420" y="340" font-family="DejaVu Sans,sans-serif" font-size="17" fill="#536271" font-weight="normal" text-anchor="start" >c</text>
+<text x="420" y="390" font-family="DejaVu Sans,sans-serif" font-size="17" fill="#536271" font-weight="normal" text-anchor="start" >d</text>
+<text x="420" y="440" font-family="DejaVu Sans,sans-serif" font-size="17" fill="#536271" font-weight="normal" text-anchor="start" >e</text>
+<text x="420" y="530" font-family="DejaVu Sans,sans-serif" font-size="17" fill="#536271" font-weight="normal" text-anchor="start" >f</text>
+<text x="420" y="560" font-family="DejaVu Sans,sans-serif" font-size="17" fill="#536271" font-weight="normal" text-anchor="start" >g</text>
+<text x="420" y="590" font-family="DejaVu Sans,sans-serif" font-size="17" fill="#536271" font-weight="normal" text-anchor="start" >h</text>
+<text x="420" y="620" font-family="DejaVu Sans,sans-serif" font-size="17" fill="#536271" font-weight="normal" text-anchor="start" >i</text>
+<text x="420" y="650" font-family="DejaVu Sans,sans-serif" font-size="17" fill="#536271" font-weight="normal" text-anchor="start" >j</text>
+<rect x="410" y="455" width="750" height="40" rx="6" fill="#D8DDD4" stroke="none" />
+<rect x="537" y="215" width="36" height="242" rx="8" fill="#D36A12" stroke="none" opacity=".12"/>
+<rect x="792" y="215" width="36" height="242" rx="8" fill="#138A53" stroke="none" opacity=".12"/>
+<circle cx="190" cy="235" r="4" fill="#C8CDD3" stroke="none" data-node="detail:input"/>
+<circle cx="1435" cy="385" r="4" fill="#C8CDD3" stroke="none" data-node="detail:reader"/>
+<circle cx="1435" cy="645" r="4" fill="#C8CDD3" stroke="none" data-node="detail:GND"/>
+<polyline points="190,235 555,235" fill="none" stroke="#FFFFFF" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="190,235 555,235" fill="none" stroke="#D36A12" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" data-from="detail:input" data-to="detail:a2"/>
+<circle cx="190" cy="235" r="6" fill="#D36A12" stroke="#FFFFFF" />
+<circle cx="555" cy="235" r="6" fill="#D36A12" stroke="#FFFFFF" />
+<g data-component="resistor" data-name="R oben" data-ohms="1000" data-from="detail:b2" data-to="detail:b5" transform="translate(682.5,285.0) rotate(0.0)">
+<line x1="-127.5" y1="0" x2="127.5" y2="0" stroke="#8E969F" stroke-width="3"/>
+<rect x="-21.0" y="-8" width="42" height="16" rx="5" fill="#D5B588" stroke="#AA8F6A" />
+<rect x="-14.62" y="-8" width="3.2" height="16" rx="0" fill="#743B1B" stroke="none" />
+<rect x="-6.640000000000001" y="-8" width="3.2" height="16" rx="0" fill="#202020" stroke="none" />
+<rect x="1.3400000000000003" y="-8" width="3.2" height="16" rx="0" fill="#D52E34" stroke="none" />
+<rect x="12.680000000000001" y="-8" width="3.2" height="16" rx="0" fill="#C19B32" stroke="none" />
+</g>
+<rect x="646" y="311" width="104" height="20" rx="3" fill="#FFFFFF" stroke="none" />
+<text x="650" y="325" font-family="DejaVu Sans,sans-serif" font-size="13" fill="#233044" font-weight="bold" text-anchor="start" >R oben · 1 kΩ</text>
+<polyline points="810,385 1435,385" fill="none" stroke="#FFFFFF" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="810,385 1435,385" fill="none" stroke="#138A53" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" data-from="detail:d5" data-to="detail:reader"/>
+<circle cx="810" cy="385" r="6" fill="#138A53" stroke="#FFFFFF" />
+<circle cx="1435" cy="385" r="6" fill="#138A53" stroke="#FFFFFF" />
+<g data-component="resistor" data-name="R unten" data-ohms="2000" data-from="detail:e5" data-to="detail:h5" transform="translate(810.0,510.0) rotate(90.0)">
+<line x1="-75.0" y1="0" x2="75.0" y2="0" stroke="#8E969F" stroke-width="3"/>
+<rect x="-21.0" y="-8" width="42" height="16" rx="5" fill="#D5B588" stroke="#AA8F6A" />
+<rect x="-14.62" y="-8" width="3.2" height="16" rx="0" fill="#D52E34" stroke="none" />
+<rect x="-6.640000000000001" y="-8" width="3.2" height="16" rx="0" fill="#202020" stroke="none" />
+<rect x="1.3400000000000003" y="-8" width="3.2" height="16" rx="0" fill="#D52E34" stroke="none" />
+<rect x="12.680000000000001" y="-8" width="3.2" height="16" rx="0" fill="#C19B32" stroke="none" />
+</g>
+<rect x="836" y="496" width="112" height="20" rx="3" fill="#FFFFFF" stroke="none" />
+<text x="840" y="510" font-family="DejaVu Sans,sans-serif" font-size="13" fill="#233044" font-weight="bold" text-anchor="start" >R unten · 2 kΩ</text>
+<polyline points="810,645 1435,645" fill="none" stroke="#FFFFFF" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="810,645 1435,645" fill="none" stroke="#374151" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" data-from="detail:j5" data-to="detail:GND"/>
+<circle cx="810" cy="645" r="6" fill="#374151" stroke="#FFFFFF" />
+<circle cx="1435" cy="645" r="6" fill="#374151" stroke="#FFFFFF" />
+<text x="75" y="190" font-family="DejaVu Sans,sans-serif" font-size="23" fill="#233044" font-weight="bold" text-anchor="start" >Arduino-Ausgang</text>
+<text x="75" y="282" font-family="DejaVu Sans,sans-serif" font-size="23" fill="#D36A12" font-weight="bold" text-anchor="start" >5 V</text>
+<text x="1210" y="335" font-family="DejaVu Sans,sans-serif" font-size="22" fill="#233044" font-weight="bold" text-anchor="start" >zum RC522-Eingang</text>
+<text x="1210" y="423" font-family="DejaVu Sans,sans-serif" font-size="19" fill="#138A53" font-weight="bold" text-anchor="start" >ca. 3,3 V am Abgriff</text>
+<text x="1230" y="615" font-family="DejaVu Sans,sans-serif" font-size="20" fill="#233044" font-weight="bold" text-anchor="start" >gemeinsame Masse</text>
+<text x="1230" y="676" font-family="DejaVu Sans,sans-serif" font-size="20" fill="#374151" font-weight="bold" text-anchor="start" >GND</text>
+<text x="445" y="740" font-family="DejaVu Sans,sans-serif" font-size="25" fill="#233044" font-weight="bold" text-anchor="start" >5 V × 2 kΩ / (1 kΩ + 2 kΩ) ≈ 3,33 V</text>
+<text x="75" y="800" font-family="DejaVu Sans,sans-serif" font-size="25" fill="#233044" font-weight="bold" text-anchor="start" >Widerstände erkennen</text>
+<text x="75" y="840" font-family="DejaVu Sans,sans-serif" font-size="21" fill="#233044" font-weight="bold" text-anchor="start" >1 kΩ = 1000 Ω</text>
+<text x="440" y="840" font-family="DejaVu Sans,sans-serif" font-size="20" fill="#233044" font-weight="normal" text-anchor="start" >4 Ringe: Braun · Schwarz · Rot · Gold</text>
+<text x="440" y="877" font-family="DejaVu Sans,sans-serif" font-size="20" fill="#233044" font-weight="normal" text-anchor="start" >5 Ringe: Braun · Schwarz · Schwarz · Braun · Braun</text>
+<text x="75" y="925" font-family="DejaVu Sans,sans-serif" font-size="21" fill="#233044" font-weight="bold" text-anchor="start" >2 kΩ = 2000 Ω</text>
+<text x="440" y="925" font-family="DejaVu Sans,sans-serif" font-size="20" fill="#233044" font-weight="normal" text-anchor="start" >4 Ringe: Rot · Schwarz · Rot · Gold</text>
+<text x="440" y="962" font-family="DejaVu Sans,sans-serif" font-size="20" fill="#233044" font-weight="normal" text-anchor="start" >5 Ringe: Rot · Schwarz · Schwarz · Braun · Braun</text>
+<text x="75" y="1020" font-family="DejaVu Sans,sans-serif" font-size="17" fill="#536271" font-weight="normal" text-anchor="start" >Gold: ±5 % · letzter brauner Ring: ±1 % · Im Zweifel den Widerstand mit einem Multimeter messen.</text>
+</svg>

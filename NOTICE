@@ -1,0 +1,13 @@
+Required Notice: Copyright (c) 2026 CFS Tagwriter project contributors.
+
+Project-owned source code, documentation and original graphical assets are
+provided under PolyForm Noncommercial License 1.0.0.
+https://polyformproject.org/licenses/noncommercial/1.0.0
+
+Third-party components retain their own copyright notices and license grants.
+See THIRD_PARTY_NOTICES.md and LICENSES/.
+
+The printer protocol adaptation in cfs_label_protocol.py includes material
+adapted from Katasymbol Web, copyright (c) 2026 Katasymbol Web contributors,
+licensed under MIT. Its complete notice accompanies this project.
+

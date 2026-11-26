@@ -1,0 +1,2 @@
+# Optional, nur zum erneuten Rendern der eigenen SVG-Bilder.
+CairoSVG==2.9.1
