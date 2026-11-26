@@ -24,7 +24,7 @@ class Distribution(unittest.TestCase):
         with self.assertRaises(ValueError):release_notes('0.0.0')
         notes=release_notes(release_versions()['APP_VERSION'])
         self.assertIn('ältere',notes.casefold())
-        self.assertNotIn('**3.6.0 ·',notes)
+        self.assertNotIn('**3.6.1 ·',notes)
 
     def test_nonempty_destination_is_preserved(self):
         with tempfile.TemporaryDirectory() as directory:

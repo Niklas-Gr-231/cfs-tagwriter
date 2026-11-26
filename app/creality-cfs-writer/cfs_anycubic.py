@@ -7,6 +7,7 @@ or map arbitrary slicer calibrations into Anycubic firmware/cloud profiles.
 """
 from dataclasses import dataclass
 from datetime import datetime
+from uuid import uuid4
 import json
 from pathlib import Path
 import re
@@ -143,7 +144,7 @@ class AceDevice:
                 raise BridgeError('ACCESS_BITS', 'NTAG213 ist gesperrt, passwortgeschützt oder nicht im unterstützten Auslieferungszustand. Sperren und Passwörter werden nicht verändert.')
             directory = Path(backup_dir)
             directory.mkdir(parents=True, exist_ok=True)
-            backup = directory/f'{datetime.now():%Y%m%d-%H%M%S-%f}_{expected_uid}_ACE.json'
+            backup = directory/f'{datetime.now():%Y%m%d-%H%M%S-%f}_{uuid4().hex}_{expected_uid}_ACE.json'
             # Backup must succeed before the very first write command.
             with backup.open('x', encoding='utf-8') as stream:
                 json.dump({'format': 'ace-ntag213-user-pages-backup-v1', 'uid': expected_uid,

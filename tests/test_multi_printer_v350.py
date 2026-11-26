@@ -20,6 +20,19 @@ class ExperimentalAce(unittest.TestCase):
     def setUp(self):
         self.spec = AceSpec('TEST-PETG-01', 'PETG', '#123456', 817, 270, 230, 250, 65, 75, '123456')
 
+    def test_repeated_clock_tick_keeps_both_ace_backups(self):
+        from datetime import datetime
+        bridge=self.fake_bridge()
+        with tempfile.TemporaryDirectory() as directory,patch('cfs_anycubic.datetime') as clock:
+            clock.now.return_value=datetime(2026,1,1,12)
+            first=AceDevice(bridge).write_tag(bridge.uid,self.spec,directory)
+            saved=Path(first['backup']).read_bytes()
+            second=AceDevice(bridge).write_tag(bridge.uid,replace(self.spec,color='#AABBCC'),directory)
+            self.assertNotEqual(first['backup'],second['backup'])
+            self.assertEqual(Path(first['backup']).read_bytes(),saved)
+            self.assertEqual(len(list(Path(directory).glob('*.json'))),2)
+            self.assertTrue(second['verified'])
+
     def test_native_fields_roundtrip_but_roll_number_is_not_falsely_claimed_as_native(self):
         raw = encode(self.spec)
         self.assertEqual(len(raw), 144)

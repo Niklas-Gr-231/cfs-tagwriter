@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from uuid import uuid4
 import json
 from pathlib import Path
 import re
@@ -188,7 +189,7 @@ class Bridge:
             backup_dir = Path(backup_dir)
             try:
                 backup_dir.mkdir(parents=True, exist_ok=True)
-                backup_path = backup_dir / f"{datetime.now():%Y%m%d-%H%M%S-%f}_{expected_uid}.json"
+                backup_path = backup_dir / f"{datetime.now():%Y%m%d-%H%M%S-%f}_{uuid4().hex}_{expected_uid}.json"
                 backup = {
                     "format": "cfs-mega-sector1-backup-v1", "uid": expected_uid,
                     "created": datetime.now().astimezone().isoformat(),

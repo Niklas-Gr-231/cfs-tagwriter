@@ -1,5 +1,17 @@
 # Änderungen
 
+**3.6.2 · 27.11.2026 · Sicherungen bei schnellen Schreibvorgängen**
+
+- Sicherungsnamen enthalten zusätzlich eine eindeutige Zufallskennung.
+  Mehrfaches Beschreiben desselben Tags im selben Uhrzeit-Takt kollidiert
+  auch unter Windows nicht mehr mit der vorherigen Sicherungsdatei.
+- Gilt für Creality-CFS und den experimentellen ACE-Modus. Bestehende
+  Sicherungen bleiben erhalten; eine Sicherung muss vor dem Schreiben gelingen.
+- Regressionstests mit festgehaltener Uhrzeit für beide Tagformate.
+- GitHub-Freigabe mit automatischen Plattformprüfungen und erhaltenen Releases.
+- Druckerdienst 2.1.0 und Arduino-Bridge 1.1.0 bleiben unverändert.
+
+
 **3.6.1 · 27.11.2026 · Beispielplatte wieder herunterladen**
 
 - Eigener 3MF-Downloadknopf auf der Etiketten-Startseite und unter Hilfe,

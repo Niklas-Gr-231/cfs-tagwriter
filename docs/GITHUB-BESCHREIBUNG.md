@@ -14,7 +14,7 @@ Bei einem Fehler zeigt die Oberfläche passend **Erneut lesen** oder **Erneut
 schreiben** an. Die Erkennung durch die Druckerfirmware muss anschließend am
 jeweiligen Gerät bestätigt werden.
 
-**Versionen:** App 3.6.1, Creality-Druckerdienst 2.1.0, Arduino-Bridge 1.1.0.
+**Versionen:** App 3.6.2, Creality-Druckerdienst 2.1.0, Arduino-Bridge 1.1.0.
 Die Komponenten sind unabhängig versioniert. Ein App-Update spielt weder
 Druckerdienst noch Arduino-Programm oder Herstellerfirmware automatisch auf.
 

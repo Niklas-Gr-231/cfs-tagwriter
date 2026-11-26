@@ -327,6 +327,18 @@ class DeviceTests(unittest.TestCase):
         self.assertEqual(profile["authentication"], "creality")
         self.assertEqual(profile["profile"]["color"], "#FF0000")
 
+    def test_repeated_clock_tick_still_produces_distinct_backups(self):
+        from datetime import datetime
+        with patch('cfs_device.datetime') as clock:
+            clock.now.return_value=datetime(2026,1,1,12)
+            first=self.bridge.write_tag(UID,PLA_RED,self.backup_dir)
+            first_contents=Path(first['backup']).read_bytes()
+            second=self.bridge.write_tag(UID,replace(PLA_RED,color='#0000FF'),self.backup_dir)
+        self.assertNotEqual(first['backup'],second['backup'])
+        self.assertEqual(Path(first['backup']).read_bytes(),first_contents)
+        self.assertEqual(len(self.backup_files()),2)
+        self.assertTrue(second['verified'])
+
     def test_rewrite_own_tag_without_another_key_change(self):
         self.bridge.write_tag(UID, PLA_RED, self.backup_dir)
         self.tag.mutations.clear()

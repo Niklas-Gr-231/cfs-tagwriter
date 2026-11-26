@@ -1,4 +1,4 @@
-# Prüfstand der Git-Ausgabe 3.6.1
+# Prüfstand der Git-Ausgabe 3.6.2
 
 Am 26.11.2026 wurde die Git-Ausgabe lokal auf Linux mit Python 3.12 in einer
 frischen virtuellen Umgebung geprüft. Die Installation erfolgte ausschließlich
@@ -129,3 +129,18 @@ Die ausgegebene 3MF wurde zusätzlich mit lib3mf 2.5.0 im strikten Modus
 eingelesen: keine Warnungen, vier gültige, geschlossene und orientierte Meshes.
 Diese Bibliothek wurde nur zur Entwicklungskontrolle verwendet und wird für
 den App-Betrieb oder Export nicht benötigt.
+
+## GitHub und schnelle Schreibvorgänge 3.6.2
+
+Die erste echte GitHub-Matrix führte die Tests unter Linux, Windows und macOS
+mit Python 3.11 und 3.12 aus. Dabei wurden plattformabhängige Testpfade,
+Zeilenenden der Lizenzdatei und die virtuelle Bildschirmgröße korrigiert.
+Die anschließende Quellcodeprüfung war auf allen sechs Kombinationen erfolgreich.
+
+Eine weitere Windows-Prüfung fand eine mögliche Namenskollision bei sehr schnell
+aufeinanderfolgenden Sicherungen. Version 3.6.2 ergänzt dafür eine Zufallskennung
+und zwei Regressionstests mit identischer Uhrzeit. Es gibt nun 190 Tests.
+Sicherung vor Änderung, exklusives Anlegen und Rückleseprüfung bleiben erhalten.
+Windows-/macOS-Softwaretests in GitHub sind keine physischen NFC-/Bluetoothtests.
+Der Release-Workflow veröffentlicht nur nach erfolgreichen Prüfungen; der jeweils
+aktuelle Stand ist im GitHub-Reiter Actions sichtbar.

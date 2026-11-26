@@ -4,7 +4,7 @@ Desktop-Werkzeug für eigene Filamentprofile und RFID-Aufkleber an Creality-CFS-
 Die Anwendung liest und beschreibt MIFARE-Classic-Tags über einen Arduino,
 verwaltet die Zuordnung zum Filamentprofil und erzeugt 40 × 30 mm Swatch-Etiketten.
 
-**App 3.6.1 · Druckerdienst 2.1.0 · Arduino-Bridge 1.1.0**
+**App 3.6.2 · Druckerdienst 2.1.0 · Arduino-Bridge 1.1.0**
 
 Eigener Projektcode ist unter **PolyForm Noncommercial 1.0.0** verfügbar.
 Nichtkommerzielle Nutzung, Änderungen und Weitergabe sind nach den
@@ -41,8 +41,8 @@ Das Projekt bietet folgende Funktionen.
 | Umgebung | Stand der Unterstützung |
 | --- | --- |
 | Linux Mint / Ubuntu | Desktop lokal geprüft. Mega/RC522 und T50M Pro über Bluetooth Classic im bisherigen Projektbetrieb bestätigt. Der neue Quellcode-Upload benötigt einen erneuten Gerätetest. |
-| Windows 10/11, x64 | Portable Desktop-, USB-, SSH- und BLE-Anbindung vorhanden. Automatische Tests für GitHub vorbereitet. Physische Gerätetests stehen aus. |
-| macOS, Intel / Apple Silicon | Portable Desktop-, USB-, SSH- und BLE-Anbindung vorhanden. Automatische Tests für GitHub vorbereitet. Physische Gerätetests stehen aus. |
+| Windows 10/11, x64 | Portable Desktop-, USB-, SSH- und BLE-Anbindung vorhanden. Automatische GitHub-Tests unter Python 3.11/3.12 durchgeführt; Ergebnisse im Reiter Actions. Physische Gerätetests stehen aus. |
+| macOS, Intel / Apple Silicon | Portable Desktop-, USB-, SSH- und BLE-Anbindung vorhanden. Automatische GitHub-Tests unter Python 3.11/3.12 durchgeführt; Ergebnisse im Reiter Actions. Physische Gerätetests stehen aus. |
 | Creality K2 Pro mit CFS | Bisheriges Referenzgerät für Dienst und Profilzuordnung. Firmwareänderungen können eine Reparatur erfordern. |
 | Weitere Creality-CFS-/CFS-C-Modelle | Experimentell. Native Modell-, Katalog-, Düsen-, Python- und Dienststarterprüfung vor Installation. Eine passende CFS-/CFS-C-Ausrüstung bleibt erforderlich. |
 | Anycubic Kobra 3 / V2 / Max / Max V2, Kobra 4, Kobra S1 / S1 Max, Kobra X mit ACE | Getrennte Drucker-/Wechslerliste, dokumentiertes ACE-Layout und ausdrücklich freizugebende unbestätigte Formate. Keine Bestätigung am Gerät und keine Kalibrierungs-/Cloudintegration. |
