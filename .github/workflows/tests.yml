@@ -31,6 +31,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y xvfb python3-tk
-          xvfb-run -a python tools/smoke_ui.py
-          xvfb-run -a python tools/smoke_features.py
-          xvfb-run -a python tools/smoke_guide.py
+          xvfb-run -a --server-args="-screen 0 1500x1150x24" python tools/smoke_ui.py
+          xvfb-run -a --server-args="-screen 0 1500x1150x24" python tools/smoke_features.py
+          xvfb-run -a --server-args="-screen 0 1500x1150x24" python tools/smoke_guide.py

@@ -11,3 +11,9 @@
 *.png binary
 *.ico binary
 *.ttf binary
+
+LICENSE text eol=lf
+NOTICE text eol=lf
+*.svg text eol=lf
+*.json text eol=lf
+*.3mf binary

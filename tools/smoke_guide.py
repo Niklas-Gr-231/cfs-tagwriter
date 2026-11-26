@@ -19,7 +19,7 @@ def without_imagetk(name, globals=None, locals=None, fromlist=(), level=0):
 root=tk.Tk();root.geometry('1000x700');errors=[]
 root.report_callback_exception=lambda *args:errors.append(args)
 def settle():
-    deadline=time.monotonic()+.25
+    deadline=time.monotonic()+.5
     while time.monotonic()<deadline:root.update();time.sleep(.005)
 with patch('builtins.__import__',side_effect=without_imagetk):
     for dark in (False,True):

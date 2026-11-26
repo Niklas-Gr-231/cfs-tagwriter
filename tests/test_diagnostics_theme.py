@@ -107,7 +107,7 @@ class DesktopIntegration(unittest.TestCase):
         from cfs_desktop import refresh_menu_icon
         import tempfile
         with tempfile.TemporaryDirectory() as folder:
-            assets=Path(folder)/'assets';assets.mkdir()
+            assets=Path(folder).resolve()/'assets';assets.mkdir()
             (assets/'cfs-tagwriter.png').write_bytes(b'icon')
             desktop=Path(folder)/'cfs-tagwriter.desktop'
             before='[Desktop Entry]\nName=CFS Tagwriter\nExec="'+str(assets/'Start-Tagwriter.sh')+'"\nIcon=old.svg\nTerminal=false\n'
@@ -124,7 +124,7 @@ class DesktopIntegration(unittest.TestCase):
         from cfs_desktop import refresh_menu_icon
         import tempfile
         with tempfile.TemporaryDirectory() as folder:
-            assets=Path(folder)/'assets';assets.mkdir();(assets/'cfs-tagwriter.png').write_bytes(b'icon')
+            assets=Path(folder).resolve()/'assets';assets.mkdir();(assets/'cfs-tagwriter.png').write_bytes(b'icon')
             desktop=Path(folder)/'other.desktop';desktop.write_text('Name=Other app\nExec=/somewhere/else\nIcon=old.svg\n')
             before=desktop.read_bytes()
             with patch('sys.platform','linux'):self.assertFalse(refresh_menu_icon(assets,desktop))

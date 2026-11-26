@@ -64,7 +64,8 @@ class SourceUpload(unittest.TestCase):
 
 class PortableStartup(unittest.TestCase):
     def test_default_paths_follow_each_operating_system(self):
-        with patch.dict(os.environ, {}, clear=True):
+        fake_home=Path(tempfile.gettempdir()).resolve()/'test-home'
+        with patch.dict(os.environ, {}, clear=True),patch.object(Path,'home',return_value=fake_home):
             for platform, suffix in (('linux', '.local/share/cfs-tagwriter/data'), ('darwin', 'Library/Application Support/CFS-Tagwriter/data'), ('win32', 'AppData/Local/CFS-Tagwriter/data')):
                 with self.subTest(platform=platform), patch.object(sys, 'platform', platform):
                     self.assertEqual(start.user_data_directory(), Path.home()/suffix)
@@ -77,7 +78,7 @@ class PortableStartup(unittest.TestCase):
             with patch('cfs_writer.main', return_value=0) as run:
                 self.assertEqual(start.main(['--demo', '--data-dir', directory]), 0)
             self.assertEqual(registry.read_bytes(), original)
-            self.assertEqual(run.call_args.args[0], ['--registry', str(registry), '--demo'])
+            self.assertEqual(run.call_args.args[0], ['--registry', str(registry.resolve()), '--demo'])
 
     def test_fresh_profile_registry_has_no_printer_or_personal_profiles(self):
         with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ), patch('cfs_writer.main', return_value=0):

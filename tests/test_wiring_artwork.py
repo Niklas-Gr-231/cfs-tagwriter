@@ -85,7 +85,7 @@ class WiringArtwork(unittest.TestCase):
         from PIL import Image
         for name in ('mega2560-breadboard', 'nano328p-breadboard', 'spannungsteiler-detail'):
             with self.subTest(sheet=name):
-                text = (ASSETS/(name+'.svg')).read_text()
+                text = (ASSETS/(name+'.svg')).read_text(encoding='utf-8')
                 self.assertIn('PolyForm Noncommercial 1.0.0', text)
                 with Image.open(ASSETS/(name+'.png')) as image:
                     self.assertEqual(image.width, 3280)
