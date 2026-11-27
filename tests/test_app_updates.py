@@ -114,6 +114,16 @@ class Updates(unittest.TestCase):
         self.assertEqual(env['PYINSTALLER_RESET_ENVIRONMENT'],'1')
         self.assertTrue(env['CFS_APP_DATA'].endswith('test-data'))
 
+    def test_restart_uses_the_new_bundled_printer_library(self):
+        with tempfile.TemporaryDirectory() as directory:
+            bundle=Path(directory)/'old-bundle'
+            with patch.object(updates.sys,'_MEIPASS',str(bundle),create=True):
+                with patch.dict(os.environ,{'CFS_LIBLZMA':str(bundle/'native-libs/liblzma')}):
+                    self.assertNotIn('CFS_LIBLZMA',updates.launch_environment(directory))
+                custom=str(Path(directory)/'custom/liblzma')
+                with patch.dict(os.environ,{'CFS_LIBLZMA':custom}):
+                    self.assertEqual(updates.launch_environment(directory)['CFS_LIBLZMA'],custom)
+
     def test_bundle_rejects_traversal_symlinks_and_wrong_root(self):
         for name,mode,content in [('CFS Tagwriter.app/../../escape',stat.S_IFREG,b'x'),('Other.app/file',stat.S_IFREG,b'x'),('CFS Tagwriter.app/link',stat.S_IFLNK,b'/tmp/escape'),('CFS Tagwriter.app/link',stat.S_IFLNK,b'../../escape')]:
             with self.subTest(name=name),tempfile.TemporaryDirectory() as directory:

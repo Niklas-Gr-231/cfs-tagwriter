@@ -165,6 +165,12 @@ def launch_environment(data):
     env = os.environ.copy()
     for name in ('APPIMAGE','APPDIR','OWD','ARGV0','LD_LIBRARY_PATH','LD_LIBRARY_PATH_ORIG','DYLD_LIBRARY_PATH','PYTHONHOME','PYTHONPATH'):
         env.pop(name,None)
+    # Bundled libraries live in a temporary directory that disappears when the
+    # old app closes. An explicit library outside the bundle remains supported.
+    bundle=getattr(sys,'_MEIPASS',None)
+    configured=env.get('CFS_LIBLZMA')
+    if bundle and configured and Path(configured).resolve().is_relative_to(Path(bundle).resolve()):
+        env.pop('CFS_LIBLZMA',None)
     # Tell the PyInstaller bootloader this is a fresh independent process.
     env['PYINSTALLER_RESET_ENVIRONMENT'] = '1'
     env['APPIMAGE_EXTRACT_AND_RUN'] = '1'

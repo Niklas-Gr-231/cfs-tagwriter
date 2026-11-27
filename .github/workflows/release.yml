@@ -75,10 +75,10 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           pattern: native-*
-          path: ../native-downloads
+          path: ${{ runner.temp }}/native-downloads
           merge-multiple: true
       - name: Native Pakete und Prüfsummen ergänzen
-        run: python tools/finalize_release.py ../release-assets ../native-downloads
+        run: python tools/finalize_release.py ../release-assets "${{ runner.temp }}/native-downloads"
       - name: Version und ältere Releases erhalten
         env:
           GH_TOKEN: ${{ github.token }}
