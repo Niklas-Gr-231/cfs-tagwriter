@@ -17,12 +17,13 @@ class TagFeedback:
         self.phase = 'busy'
         self.message = 'Tag wird gelesen…' if operation == 'read' else 'Tag wird geschrieben und zurückgelesen…'
 
-    def success(self, uid, *, verified=False):
+    def success(self, uid, *, verified=False, details=''):
         if self.operation == 'write' and verified is not True:
             raise ValueError('Schreiben ohne Rücklesebestätigung ist kein Erfolg.')
         self.uid = uid
         self.phase = 'success'
         self.message = ('✓ Tag geschrieben und durch Rücklesen geprüft' if self.operation == 'write' else '✓ Tag erfolgreich gelesen')+' · '+uid
+        if details:self.message+='\n'+str(details)
 
     def fail(self, message):
         self.phase = 'error'
@@ -40,3 +41,19 @@ class TagFeedback:
         if self.operation == operation and self.phase == 'error':
             return 'Erneut lesen' if operation == 'read' else 'Erneut schreiben'
         return 'Tag lesen' if operation == 'read' else 'Tag schreiben'
+
+
+def filament_details(spec,material=None):
+    """Snapshot the actual verified payload, not later edits to the form."""
+    import re
+    material=material or {}
+    name=str(getattr(spec,'name','') or material.get('name') or '').strip()
+    kind=getattr(spec,'type',None) or material.get('type')
+    if isinstance(kind,list):kind=kind[0] if kind else ''
+    if not kind:
+        match=re.search(r'\b(PETG|PLA|TPU|ABS|ASA|PVA|PA|PC|PET|HIPS)(?:[-+][A-Z0-9]+)?\b',name,re.IGNORECASE)
+        kind=match[0].upper() if match else 'Filament'
+    parts=[str(kind)]
+    if name and name.casefold()!=str(kind).casefold():parts.append(name)
+    parts.extend((str(spec.color).upper(),str(spec.weight_g)+' g','Rolle '+spec.serial))
+    return ' · '.join(parts)

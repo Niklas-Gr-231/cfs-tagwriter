@@ -104,6 +104,7 @@ def apply(root,tk,ttk,dark=False):
             widget.configure(background=c['surface'],foreground=c['fg'],activebackground=c['selection'],activeforeground='#FFFFFF',disabledforeground=c['disabled'],borderwidth=0,activeborderwidth=0)
         elif isinstance(widget,tk.Text):
             widget.configure(background=c['field'],foreground=c['fg'],insertbackground=c['fg'],selectbackground=c['selection'],selectforeground='#FFFFFF',highlightthickness=1,highlightbackground=c['border'],highlightcolor=c['focus'],borderwidth=0)
+            if getattr(widget,'_cfs_history',False):widget.tag_configure('history_time',foreground=c['muted'])
         elif isinstance(widget,tk.Canvas):
             if not getattr(widget,'_cfs_keep_canvas_colors',False):widget.configure(background=c['bg'])
         elif isinstance(widget,ttk.Widget):

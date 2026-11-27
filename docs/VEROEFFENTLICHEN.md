@@ -120,3 +120,8 @@ C/C++-Compiler und Internet für die anhand fester SHA-256 geprüften XZ-/AppIma
 Bauwerkzeuge sind nötig. Die zusätzlichen Bauwerkzeuge gehören nicht zur
 normalen App-Installation. Physische USB-/Bluetooth-Gerätetests sind getrennt
 von Paket- und Oberflächentests durchzuführen.
+
+Patchnotes werden offline mitgeliefert: Bei Versionsänderungen `app-release-notes.md`
+auf den aktuellen Abschnitt setzen und `app-release-history.md` mit `CHANGELOG.md`
+unter `app/creality-cfs-writer` abgleichen. Tests prüfen die Historie; portable und
+native Pakete enthalten beide Dateien.

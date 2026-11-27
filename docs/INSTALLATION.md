@@ -58,7 +58,9 @@ Benutzerdaten werden nicht zurückgesetzt. Alte Update-Unterordner nur bei gesch
 App entfernen, wenn sie nicht mehr in `app-update.json` als aktive Version stehen.
 
 Nach dem Update erscheint die Änderungsübersicht einmalig. **Hilfe → Was ist neu?**
-zeigt sie jederzeit erneut an. Keine Update-Suche beim Start und keine Telemetrie;
+zeigt sie jederzeit erneut an. Auf der Update-Seite können unter **Patch-Historie**
+auch frühere Versionshinweise offline ausgewählt werden; die Auswahl ändert nicht
+das angebotene Update. Keine Update-Suche beim Start und keine Telemetrie;
 GitHub wird erst beim Klick auf „Nach Updates suchen“ kontaktiert.
 Auch die Python-Ausgabe kann über diesen Weg zu einem nativen Paket wechseln;
 ihre bisherige Datenablage bleibt dabei erhalten.
@@ -167,3 +169,21 @@ Mit `python start.py --data-dir <Ordner>` kann eine andere Ablage gewählt werde
 Eine bestehende Einrichtung vor dem Umzug vollständig sichern. Zugangsdaten im
 System-Schlüsselbund werden auf einem anderen Rechner neu eingegeben.
 
+
+## Lesen, Schreiben und Rollennummern ab 3.8.0
+
+„Lesen & Schreiben“ öffnet die Tagoberfläche. Im Zwei-Tag-Modus bleiben die
+Bestätigungen für Tag 1 und Tag 2 getrennt sichtbar. Erst erfolgreiches
+Zurücklesen nach dem Schreiben ergibt eine grüne Schreibbestätigung.
+
+Eine vorhandene, sechsstellige Rollennummer wird beim Lesen übernommen.
+Ohne Nummer (oder bei 000000) merkt sich die App eine neue Nummer für diesen
+Tag. Erneutes Lesen ändert sie nicht. Beim Schreiben eines zweiten Tags im
+Zweiermodus werden Materialwerte und Rollennummer der ersten Rolle verwendet.
+„Neue Rolle“ ist die bewusste Vergabe einer anderen Nummer.
+
+Die lokale Zuordnung liegt in `data/state/roll-identities.json` innerhalb der
+Benutzerablage und bleibt bei App-Updates erhalten. Sie wird nicht in öffentliche
+Pakete aufgenommen. Bei ACE ist die Rollennummer ausschließlich lokal: das
+native, dokumentierte Tagformat bietet dafür kein Feld. Die NFC-Formate,
+Arduino-Bridge und der Druckerdienst werden hierdurch nicht verändert.

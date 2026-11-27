@@ -1,31 +1,26 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Update and release notes pages, using the existing themed controls."""
 import json
-from pathlib import Path
 from cfs_versions import APP_VERSION
 from cfs_updates import check_release, stage_release, _atomic_json
-
-
-def release_notes():
-    path=Path(__file__).with_name('app-release-notes.md')
-    try:return path.read_text(encoding='utf-8')
-    except OSError:return 'CFS Tagwriter '+APP_VERSION+'\nFür diesen Entwicklungsstand ist noch keine Änderungsbeschreibung eingebaut.'
+from cfs_release_notes import release_notes, notes_panel
 
 
 def show_notes(app,tk,ttk,*,automatic=False):
     window=tk.Toplevel(app.root);window.title('Was ist neu? · CFS Tagwriter '+APP_VERSION)
-    window.geometry('800x570');window.minsize(560,350)
+    window.geometry('800x600');window.minsize(560,400)
     frame=ttk.Frame(window,padding=20);frame.pack(fill='both',expand=True)
-    ttk.Label(frame,text='CFS Tagwriter '+APP_VERSION,font=('TkDefaultFont',17,'bold')).pack(anchor='w',pady=(0,14))
-    text_frame=ttk.Frame(frame);text_frame.pack(fill='both',expand=True)
-    text=tk.Text(text_frame,wrap='word',padx=12,pady=12,relief='flat',borderwidth=0)
-    scrollbar=ttk.Scrollbar(text_frame,orient='vertical',command=text.yview)
-    text.configure(yscrollcommand=scrollbar.set);scrollbar.pack(side='right',fill='y');text.pack(fill='both',expand=True)
-    text.insert('1.0',release_notes());text.configure(state='disabled')
+    frame.columnconfigure(0,weight=1);frame.rowconfigure(1,weight=1)
+    ttk.Label(frame,text='CFS Tagwriter '+APP_VERSION,font=('TkDefaultFont',17,'bold')).grid(row=0,column=0,sticky='w',pady=(0,14))
+    viewer=notes_panel(frame,tk,ttk,history=not automatic)
+    viewer['panel'].grid(row=1,column=0,sticky='nsew')
     def close():
         if automatic:_atomic_json(app.data_dir/'app-update-seen.json',{'version':APP_VERSION})
         window.destroy()
-    ttk.Button(frame,text='Verstanden' if automatic else 'Schließen',command=close,style='Primary.TButton').pack(anchor='e',pady=(15,0))
+    footer=ttk.Frame(frame);footer.grid(row=2,column=0,sticky='ew',pady=(16,0))
+    button=ttk.Button(footer,text='Verstanden' if automatic else 'Schließen',command=close,style='Write.TButton')
+    button.pack(side='right')
+    app.release_notes_fields={**viewer,'window':window,'close':button}
     window.protocol('WM_DELETE_WINDOW',close)
     app.apply_theme(persist=False)
     if automatic:window.transient(app.root);window.lift()
@@ -63,13 +58,9 @@ def show_updates(app,tk,ttk,dialogs):
     progress=ttk.Progressbar(card,mode='determinate');progress.pack(fill='x',pady=(6,10))
     controls=ttk.Frame(card);controls.pack(fill='x',pady=10)
     state={'release':None,'receipt':None}
-    note_frame=ttk.Frame(card);note_frame.pack(fill='both',expand=True,pady=12)
-    notes=tk.Text(note_frame,height=14,wrap='word',relief='flat',borderwidth=0,padx=12,pady=12)
-    scroll=ttk.Scrollbar(note_frame,orient='vertical',command=notes.yview);scroll.pack(side='right',fill='y')
-    notes.configure(yscrollcommand=scroll.set)
-    notes.pack(fill='both',expand=True);notes.insert('1.0',release_notes());notes.configure(state='disabled')
-    def set_notes(value):
-        notes.configure(state='normal');notes.delete('1.0','end');notes.insert('1.0',value);notes.configure(state='disabled');app.apply_theme(persist=False)
+    viewer=notes_panel(card,tk,ttk)
+    viewer['panel'].pack(fill='both',expand=True,pady=12)
+    notes=viewer['text']
     def ready(receipt):
         state['receipt']=receipt
         status.set('Version '+receipt['version']+' ist geprüft und bereit. Zum Anwenden die App neu starten.')
@@ -98,6 +89,7 @@ def show_updates(app,tk,ttk,dialogs):
         app.run_operation('App-Update herunterladen und prüfen…',work,done)
     def search_updates():
         if app.busy:return
+        viewer['set_offer']()
         state.update(release=None,receipt=None);install.configure(text='Update herunterladen',state='disabled');search.configure(state='disabled')
         status.set('GitHub wird nach einer freigegebenen Version gefragt…')
         def work():
@@ -109,10 +101,9 @@ def show_updates(app,tk,ttk,dialogs):
             if 'error' in result:status.set('Suche fehlgeschlagen: '+result['error']);return
             if not result['available']:status.set('Die App ist aktuell. Neueste freigegebene Version: '+result['version']);return
             state['release']=result;status.set('Version '+result['version']+' verfügbar · '+str(round(result['size']/1048576,1))+' MB')
-            set_notes(result['notes']);install.configure(state='normal')
+            viewer['set_offer'](result);install.configure(state='normal')
         app.run_operation('Nach App-Updates suchen…',work,done)
-    search=ttk.Button(controls,text='Nach Updates suchen',command=search_updates,style='Primary.TButton');search.pack(side='left')
+    search=ttk.Button(controls,text='Nach Updates suchen',command=search_updates,style='Write.TButton');search.pack(side='left')
     install=ttk.Button(controls,text='Update herunterladen',command=download,state='disabled');install.pack(side='left',padx=12)
-    ttk.Button(controls,text='Was ist neu?',command=lambda:show_notes(app,tk,ttk)).pack(side='left')
-    app.update_page_fields={'search':search,'install':install,'status':status,'state':state,'notes':notes,'window':card,'progress':progress,'progress_text':progress_text}
+    app.update_page_fields={'search':search,'install':install,'status':status,'state':state,'notes':notes,'window':card,'progress':progress,'progress_text':progress_text,'history':viewer['selector'],'history_selection':viewer['selection']}
     app.apply_theme(persist=False)

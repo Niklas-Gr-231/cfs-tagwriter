@@ -42,7 +42,7 @@ def open_page(app,tk,ttk,title,*,scroll=False):
             if widget.winfo_exists():widget.pack(**options)
         app.close_main_page=None
         app.apply_theme(persist=False)
-    back=ttk.Button(bar,text='← Tagwriter',command=close);back.pack(side='left')
+    back=ttk.Button(bar,text='← Lesen & Schreiben',command=close);back.pack(side='left')
     ttk.Label(bar,text=title,font=('TkDefaultFont',14,'bold')).pack(side='left',padx=16)
     appearance=ttk.Button(bar,text='Hell' if app.theme_var.get()=='dark' else 'Dunkel',command=app.toggle_appearance)
     appearance.pack(side='right')

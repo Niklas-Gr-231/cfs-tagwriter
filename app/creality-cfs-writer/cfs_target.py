@@ -107,7 +107,8 @@ class TargetForm:
                        *[number(self.variables[key].get()) for key in ('nozzle_low', 'nozzle_high', 'bed_low', 'bed_high')],
                        app.serial_var.get().strip())
         encode(spec)
-        if not re.fullmatch(r'[0-9]{6}', spec.serial):
+        from cfs_roll_identity import valid_serial
+        if not valid_serial(spec.serial):
             raise ValueError('Die lokale Rollennummer muss sechs Ziffern enthalten.')
         self.target_config()
         return spec
@@ -148,7 +149,7 @@ class TargetForm:
                 if widget in (app.material_combo, app.id_entry, app.name_entry, app.color_entry, app.color_button, app.weight_combo,
                               app.length_entry, app.serial_entry, app.import_button, app.slicer_sync_button):widget.configure(state='disabled')
         writable = valid and self.writable and app.uid and app.bridge is not None and not locked
-        if pair.enabled and (app.uid in pair.written or len(pair.written) >= 2):writable = False
+        if pair.enabled and (app.uid in pair.written or app.uid and pair.number_for(app.uid) is None or len(pair.written) >= 2):writable = False
         app.write_button.configure(state='normal' if writable else 'disabled', text=app.tag_feedback.caption('write'))
         app.read_button.configure(text=app.tag_feedback.caption('read'))
         app.tag_result_var.set(app.tag_feedback.message)
@@ -167,11 +168,17 @@ class TargetForm:
         app.clear_tag()
         self.writable = False
         app.tag_feedback.begin('read')
+        def work():
+            result=AceDevice(app.bridge).read_tag()
+            if not preserve:
+                legacy=FleetStore(app.data_dir).lookup('ace',result['uid'])
+                result['_roll_serial'],result['_roll_created']=app.roll_identities().resolve('ace',result['uid'],legacy=legacy)
+            return result
+
         def done(result):
             uid = result['uid']
             app.uid = uid
             self.writable = result['writable']
-            app.pair_session.read(uid)
             self.loading = True
             app._suspend_updates = True
             try:
@@ -182,17 +189,22 @@ class TargetForm:
                     app.weight_var.set(str(old.weight_g))
                     app.length_var.set(str(old.length_m))
                     for key in self.variables:self.variables[key].set(str(getattr(old, key)))
-                    saved = FleetStore(app.data_dir).lookup('ace', uid)
-                    if saved:app.serial_var.set(saved)
+
+                if not preserve:app.serial_var.set(result['_roll_serial'])
             finally:
                 self.loading = False
                 app._suspend_updates = False
-            app.tag_feedback.success(uid)
+            from dataclasses import replace
+            from cfs_tag_feedback import filament_details
+            details=filament_details(replace(old,serial=app.serial_var.get()))+' (Rollennummer lokal)' if old else 'Kein ACE-Datensatz · Rolle '+app.serial_var.get()+' lokal vorbereitet'
+            app.pair_session.read(uid,details=details)
+            app.tag_feedback.success(uid,details=details)
+            if result.get('_roll_created'):app.log('ACE-Tag ohne lokale Rollenzuordnung: '+result['_roll_serial']+' neu vergeben.')
             app.tag_var.set('UID '+uid+' · NTAG213')
             app.tag_hint_var.set(('Wunschwerte für Tag 2 beibehalten.' if preserve else 'Vorhandene Tagwerte übernommen.' if old else 'Leerer/unbekannter Datensatz; Angaben unten prüfen.')+
                                  ('' if self.writable else ' Tag ist gesperrt oder passwortgeschützt.'))
             app.status_var.set(app.tag_feedback.message)
-        app.run_operation('Tag wird gelesen…', AceDevice(app.bridge).read_tag, done)
+        app.run_operation('Tag wird gelesen…', work, done)
 
     def write(self):
         from cfs_anycubic import AceDevice, encode
@@ -209,17 +221,27 @@ class TargetForm:
             app.show_error(error)
             return
         uid, printer = app.uid, dict(self.printer)
+        def work():
+            result=device.write_tag(uid,spec,app.backup_dir)
+            if result.get('verified') is True:
+                try:app.roll_identities().remember('ace',uid,spec.serial)
+                except (OSError,ValueError) as error:result['_identity_error']=str(error)
+            return result
+
         def done(result):
             if result.get('verified') is not True:raise ValueError('Schreiben nicht durch Zurücklesen bestätigt.')
-            app.pair_session.confirmed(uid, spec)
-            app.tag_feedback.success(uid, verified=True)
+            from cfs_tag_feedback import filament_details
+            details=filament_details(spec,app.material_by_label.get(app.material_var.get()))+' (Rollennummer lokal)'
+            app.pair_session.confirmed(uid,spec,details=details)
+            app.tag_feedback.success(uid,verified=True,details=details)
+            if result.get('_identity_error'):app.log('Tag erfolgreich geschrieben; lokale Rollenzuordnung nicht gespeichert: '+result['_identity_error'])
             app.status_var.set(app.tag_feedback.message+' · Druckererkennung noch testen.')
             app.tag_hint_var.set(app.pair_session.hint() if app.pair_session.enabled else 'Geschrieben und zurückgelesen. Experimenteller Gerätetest steht aus.')
             app.log('ACE-Tag geschrieben und geprüft. Sicherung: '+str(result.get('backup', '')))
             try:FleetStore(app.data_dir).remember(printer['ip'], 'ace', uid, spec.serial, spec.sku, spec.weight_g, allow_reassign=True)
             except (ValueError, OSError) as error:app.log('Tag geprüft; lokale Rollenzuordnung nicht gespeichert: '+str(error))
         app.tag_feedback.begin('write')
-        app.run_operation('Tag wird geschrieben und zurückgelesen…', lambda:device.write_tag(uid, spec, app.backup_dir), done)
+        app.run_operation('Tag wird geschrieben und zurückgelesen…', work, done)
 
     def load_profiles(self):
         app = self.app

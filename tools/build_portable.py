@@ -31,7 +31,7 @@ with zipfile.ZipFile(payload, 'w', zipfile.ZIP_DEFLATED) as archive:
     for sketch in ('CFS_Mega_Bridge', 'CFS_Nano_Bridge'):
         for path in sorted((writer/sketch).rglob('*')):
             if path.is_file(): archive.write(path, 'creality-cfs-writer/'+str(path.relative_to(writer)))
-    for name in ('cfs-tagwriter.svg','cfs-tagwriter.png','cfs-tagwriter-small.png','cfs-tagwriter.ico','printer-closed.png','printer-hi.png','printer-generic.png','tag-position.png','tag-position.svg','QUELLEN.md','app-release-notes.md'):
+    for name in ('cfs-tagwriter.svg','cfs-tagwriter.png','cfs-tagwriter-small.png','cfs-tagwriter.ico','printer-closed.png','printer-hi.png','printer-generic.png','tag-position.png','tag-position.svg','QUELLEN.md','app-release-notes.md','app-release-history.md'):
         archive.write(writer/name, 'creality-cfs-writer/'+name)
     for path in sorted((writer/'label-assets').iterdir()):
         if path.is_file():archive.write(path,'creality-cfs-writer/label-assets/'+path.name)

@@ -50,7 +50,8 @@ def weight_hint(value):
 
 
 def new_serial() -> str:
-    return f"{secrets.randbelow(900000):06d}"
+    from cfs_codec import new_serial as generate
+    return generate()
 
 
 def normal_color(value: str) -> str:
@@ -364,7 +365,7 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
             root.bind_all('<MouseWheel>', scroll_main, add='+')
             root.bind_all('<Button-4>', scroll_main, add='+'); root.bind_all('<Button-5>', scroll_main, add='+')
             outer.columnconfigure(0, weight=1)
-            outer.rowconfigure(5, weight=1)
+            outer.rowconfigure(4, weight=1)
 
             header = ttk.Frame(outer)
             header.grid(row=0, column=0, sticky="ew", pady=(0, 10))
@@ -386,8 +387,13 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
                 self.controls.append((self.printer_button, "normal"))
 
             from cfs_navigation import mount
-            self.navigation = mount(self, header, tk, ttk, [('Verbindung', self.printer_menu), ('Profile', self.profiles_menu), ('Hilfe', help_menu), ('Einstellungen', self.settings_menu)])
+            self.navigation = mount(self, header, tk, ttk, [('Lesen & Schreiben', self.show_tagwriter), ('Verbindung', self.printer_menu), ('Profile', self.profiles_menu), ('Hilfe', help_menu), ('Einstellungen', self.settings_menu)])
             quick=ttk.Frame(header);quick.grid(row=3,column=0,columnspan=4,sticky='ew',pady=(12,0))
+            self.add_printer_button=ttk.Button(quick,text='Drucker hinzufügen…',command=self.add_printer)
+            self.add_printer_button.pack(side='right',padx=(12,0))
+            self.controls.append((self.add_printer_button,'normal'))
+            self.printer_menu.add_command(label='Drucker hinzufügen…',command=self.add_printer)
+            self.add_printer_menu_index=self.printer_menu.index('end')
             self.labels_button=ttk.Button(quick,text='Etiketten auswählen & drucken…',style='Write.TButton',command=self.show_label_home)
             self.labels_button.pack(side='left')
             self.service_button=ttk.Button(quick,text='Druckerdienst prüfen / aktualisieren…',command=self.show_setup)
@@ -418,24 +424,43 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
                 row=1, column=0, columnspan=4, sticky="w", pady=(6, 0))
             self.controls.extend([(self.port_combo, "readonly"), (self.refresh_button, "normal"), (self.connect_button, "normal")])
 
-            tag = ttk.LabelFrame(outer, text="02   NFC-Tag lesen", padding=16)
+            tag = ttk.LabelFrame(outer, text="02   NFC-Tag lesen & schreiben", padding=16)
             tag.grid(row=2, column=0, sticky="ew", pady=(0, 12))
             tag.columnconfigure(1, weight=1)
-            self.read_button = ttk.Button(tag, text="Tag lesen", command=self.read_tag)
-            self.read_button.grid(row=0, column=0, sticky="w", padx=(0, 16))
-            ttk.Label(tag, textvariable=self.tag_var, font=("TkDefaultFont", 11, "bold")).grid(row=0, column=1, sticky="w")
+            self.tag_actions=ttk.Frame(tag)
+            self.tag_actions.grid(row=0,column=0,columnspan=2,sticky='ew')
+            self.read_button=ttk.Button(self.tag_actions,text='Tag lesen',command=self.read_tag)
+            self.read_button.pack(side='left')
+            self.write_button=ttk.Button(self.tag_actions,text='Tag schreiben',style='Write.TButton',command=self.write_tag)
+            self.write_button.pack(side='left',padx=(12,0))
+            self.label_button=ttk.Button(self.tag_actions,text='Etikett für dieses Filament…',command=self.label_for_selected)
+            self.label_button.pack(side='right',padx=(12,0))
+            ttk.Label(tag,textvariable=self.tag_var,font=('TkDefaultFont',11,'bold')).grid(row=1,column=0,columnspan=2,sticky='w',pady=(10,0))
             ttk.Label(tag, textvariable=self.tag_hint_var, style="Hint.TLabel", wraplength=810).grid(
-                row=1, column=0, columnspan=2, sticky="w", pady=(6, 0))
+                row=2, column=0, columnspan=2, sticky="w", pady=(6, 0))
+
+            ttk.Label(tag,textvariable=self.summary_var,wraplength=810).grid(row=3,column=0,columnspan=2,sticky='w',pady=(8,0))
+            ttk.Label(tag,textvariable=self.write_hint_var,style='Hint.TLabel',wraplength=810).grid(row=4,column=0,columnspan=2,sticky='w',pady=(4,0))
 
             self.tag_result_label = ttk.Label(tag, textvariable=self.tag_result_var, style='Notice.TLabel', wraplength=810)
-            self.tag_result_label.grid(row=4, column=0, columnspan=2, sticky='ew', pady=(10,0))
-            pairing=ttk.Frame(tag);pairing.grid(row=2,column=0,columnspan=2,sticky='ew',pady=(10,0))
+            self.tag_result_label.grid(row=7, column=0, columnspan=2, sticky='ew', pady=(10,0))
+            pairing=ttk.Frame(tag);pairing.grid(row=5,column=0,columnspan=2,sticky='ew',pady=(10,0))
             self.pair_check=ttk.Checkbutton(pairing,text='Zwei Tags für dieselbe Rolle',variable=self.two_tags_var,command=self.toggle_two_tags)
             self.pair_check.pack(side='left')
             self.pair_reset_button=ttk.Button(pairing,text='Zweiermodus zurücksetzen',command=self.reset_two_tags)
             self.pair_reset_button.pack(side='right')
             self.pair_hint_label=ttk.Label(tag,textvariable=self.pair_hint_var,style='Hint.TLabel',wraplength=810)
-            self.pair_hint_label.grid(row=3,column=0,columnspan=2,sticky='w',pady=(6,0));self.pair_hint_label.grid_remove()
+            self.pair_hint_label.grid(row=6,column=0,columnspan=2,sticky='w',pady=(6,0));self.pair_hint_label.grid_remove()
+            self.pair_status_frame=ttk.Frame(tag)
+            self.pair_status_frame.grid(row=8,column=0,columnspan=2,sticky='ew',pady=(10,0))
+            self.pair_status_vars=[];self.pair_status_labels=[]
+            for column in range(2):
+                self.pair_status_frame.columnconfigure(column,weight=1,uniform='paired-tags')
+                variable=tk.StringVar()
+                label=ttk.Label(self.pair_status_frame,textvariable=variable,style='Notice.TLabel',wraplength=380,justify='left',anchor='nw')
+                label.grid(row=0,column=column,sticky='nsew',padx=(0,8) if column==0 else (0,0))
+                self.pair_status_vars.append(variable);self.pair_status_labels.append(label)
+            self.pair_status_frame.grid_remove()
             self.controls.append((self.pair_check,'normal'))
 
             profile = ttk.LabelFrame(outer, text="03   Filamentprofil", padding=16)
@@ -522,36 +547,31 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
             ttk.Label(filter_frame,text='Druckertyp').grid(row=1,column=2,sticky='w',pady=(7,0))
             self.printer_model_filter=ttk.Combobox(filter_frame,textvariable=self.printer_model_filter_var,values=('Alle',),state='readonly',width=19)
             self.printer_model_filter.grid(row=1,column=3,columnspan=3,sticky='ew',pady=(7,0))
+            ttk.Label(filter_frame,text='Die Filter durchsuchen geladene Profile. Weitere Drucker über „Drucker auswählen“ laden.',style='Hint.TLabel',wraplength=810).grid(row=2,column=0,columnspan=6,sticky='w',pady=(6,0))
             self.controls.extend(((self.printer_brand_filter,'readonly'),(self.printer_model_filter,'readonly')))
-            for variable in (self.printer_brand_filter_var,self.printer_model_filter_var):variable.trace_add('write',self.apply_material_filters)
+            self.printer_brand_filter_var.trace_add('write',self.refresh_printer_models)
+            self.printer_model_filter_var.trace_add('write',self.apply_material_filters)
             ttk.Label(profile,textvariable=self.nozzle_info_var,style='Hint.TLabel',wraplength=810).grid(row=1,column=0,columnspan=6,sticky='w',pady=(0,8))
             self.controls.extend(((self.search_entry,'normal'),(self.manufacturer_filter,'readonly'),(self.nozzle_filter,'readonly')))
             for variable in (self.search_var,self.manufacturer_filter_var,self.nozzle_filter_var):variable.trace_add('write',self.apply_material_filters)
 
-            write = ttk.LabelFrame(outer,text="04   Schreiben und prüfen",padding=16)
-            write.grid(row=4, column=0, sticky="ew", pady=(0, 12))
-            write.columnconfigure(0, weight=1)
-            ttk.Label(write, textvariable=self.summary_var, wraplength=610).grid(row=0, column=0, sticky="w")
-            ttk.Label(write, textvariable=self.write_hint_var, style="Hint.TLabel", wraplength=610).grid(row=1, column=0, sticky="w", pady=(4, 0))
-            self.write_button = ttk.Button(write, text="Tag schreiben", style="Write.TButton", command=self.write_tag)
-            self.write_button.grid(row=0, column=1, rowspan=2, sticky="e", padx=(12, 0))
-            self.label_button=ttk.Button(write,text='Etikett für dieses Filament…',command=self.label_for_selected)
-            self.label_button.grid(row=2,column=1,sticky='e',pady=(10,0))
+            # Keep protocol-specific notices in section 02 as well.
+            write=ttk.Frame(tag)
+            write.grid(row=9,column=0,columnspan=2,sticky='ew')
+            write.columnconfigure(0,weight=1)
 
-            history = ttk.Frame(outer)
-            history.grid(row=5, column=0, sticky="nsew")
-            history.columnconfigure(0, weight=1)
-            history.rowconfigure(1, weight=1)
-            ttk.Label(history, text="Verlauf", style="Hint.TLabel").grid(row=0, column=0, sticky="w", pady=(0, 3))
-            self.log_widget = tk.Text(history, height=4, wrap="word", state="disabled", background="white", foreground="#334155",
-                                      font=("TkFixedFont", 9), relief="flat", padx=8, pady=6)
-            self.log_widget.grid(row=1, column=0, sticky="nsew")
-            scrollbar = ttk.Scrollbar(history, orient="vertical", command=self.log_widget.yview)
-            scrollbar.grid(row=1, column=1, sticky="ns")
+            history = ttk.LabelFrame(outer,text='Verlauf',padding=16)
+            history.grid(row=4,column=0,sticky='nsew',pady=(0,8))
+            history.columnconfigure(0,weight=1);history.rowconfigure(0,weight=1)
+            self.log_widget=tk.Text(history,height=5,wrap='word',state='disabled',font='TkDefaultFont',relief='flat',padx=12,pady=10,spacing1=3,spacing3=6)
+            self.log_widget._cfs_history=True
+            self.log_widget.grid(row=0,column=0,sticky='nsew')
+            scrollbar=ttk.Scrollbar(history,orient='vertical',command=self.log_widget.yview)
+            scrollbar.grid(row=0,column=1,sticky='ns')
             self.log_widget.configure(yscrollcommand=scrollbar.set)
 
             footer = ttk.Frame(outer)
-            footer.grid(row=6, column=0, sticky="ew", pady=(7, 0))
+            footer.grid(row=5, column=0, sticky="ew", pady=(7, 0))
             footer.columnconfigure(0, weight=1)
             ttk.Label(footer, textvariable=self.status_var, style="Hint.TLabel", wraplength=700).grid(row=0, column=0, sticky="w")
             self.progress = ttk.Progressbar(footer, mode="indeterminate", length=100)
@@ -1219,6 +1239,7 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
             if feedback is None or feedback.phase!='busy':return False
             operation=feedback.operation
             feedback.fail(str(error))
+            if getattr(self,'pair_session',None) and operation=='write':self.pair_session.failed(self.uid,str(error))
             if operation=='read' or str(getattr(error,'code','')) in ('UID_MISMATCH','SERIAL','SERIAL_ERROR'):
                 self.clear_tag()
             return True
@@ -1273,7 +1294,8 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
         def log(self, message):
             stamp = time.strftime("%H:%M:%S")
             self.log_widget.configure(state="normal")
-            self.log_widget.insert("end", f"{stamp}  {message}\n")
+            self.log_widget.insert("end",stamp+"  ",("history_time",))
+            self.log_widget.insert("end",str(message)+"\n")
             if int(self.log_widget.index("end-1c").split(".")[0])>1200:
                 self.log_widget.delete("1.0","201.0")
             self.log_widget.see("end")
@@ -1332,9 +1354,6 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
                 item['printer_manufacturer'], item['printer_model'] = info['manufacturer'], info['model']
             self.material_by_label = dict(sorted(self.material_by_label.items(), key=lambda pair: (pair[1]['printer_manufacturer'].casefold(), pair[1]['printer_model'].casefold(), str(pair[1].get('brand','')).casefold(), pair[0].casefold())))
             self._material_printer_fields={label:(item['printer_manufacturer'],item['printer_model']) for label,item in self.material_by_label.items()}
-            if hasattr(self, 'printer_brand_filter'):
-                self.printer_brand_filter.configure(values=['Alle']+sorted({item['printer_manufacturer'] for item in self.material_by_label.values()}))
-                self.printer_model_filter.configure(values=['Alle']+sorted({item['printer_model'] for item in self.material_by_label.values()}))
             self._all_material_by_label=dict(self.material_by_label)
             from cfs_nozzles import search_fields
             self._material_search_fields={label:search_fields(item) for label,item in self._all_material_by_label.items()}
@@ -1355,10 +1374,41 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
                 if not self.name_var.get().strip():
                     self.show_material(self.material_by_label[chosen])
             if hasattr(self,'manufacturer_filter'):
+                self.refresh_printer_filters()
                 from cfs_nozzles import manufacturer_name
                 self.manufacturer_filter.configure(values=['Alle']+sorted({manufacturer_name(p) for p in cleaned if manufacturer_name(p)},key=str.casefold))
                 self.apply_material_filters()
             self.update_controls()
+
+        def refresh_printer_filters(self):
+            from cfs_printer_add import configured_printers
+            from cfs_compatibility import model_info
+            models=set(getattr(self,'_material_printer_fields',{}).values())
+            try:printers=configured_printers(self)
+            except (OSError,ValueError) as error:
+                self.log('Druckerfilter: '+str(error));printers=[]
+            for printer in printers:
+                info=model_info(printer.get('printer_int_name') or printer.get('model',''))
+                if info['manufacturer']!='Unbekannt' and info['model']!='Nicht erkannt':models.add((info['manufacturer'],info['model']))
+            self._known_printer_models=models
+            if not hasattr(self,'printer_brand_filter'):return
+            self.printer_brand_filter.configure(values=['Alle']+sorted({brand for brand,_ in models}))
+            self.refresh_printer_models()
+
+        def refresh_printer_models(self,*args):
+            if not hasattr(self,'_known_printer_models'):return
+            brand=self.printer_brand_filter_var.get()
+            models=['Alle']+sorted({model for manufacturer,model in self._known_printer_models if brand=='Alle' or manufacturer==brand})
+            self.printer_model_filter.configure(values=models)
+            if self.printer_model_filter_var.get() not in models:self.printer_model_filter_var.set('Alle')
+            self.apply_material_filters()
+
+        def add_printer(self):
+            if self.busy or self.close_pending:return
+            if self.pair_session.locked:
+                self.status_var.set('Zuerst die Zweiergruppe abschließen oder zurücksetzen.');return
+            from cfs_printer_add import show_add_printer
+            show_add_printer(self,tk,ttk)
 
         def apply_material_filters(self,*args):
             if not hasattr(self,'_all_material_by_label') or getattr(self,'_resetting_filters',False):return
@@ -1613,8 +1663,8 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
                 self.run_operation("Druckerverbindung wird geprüft…", work, done)
 
             def add_anycubic():
-                cancel();self.show_anycubic()
-            ttk.Button(actions,text='Anycubic hinzufügen…',command=add_anycubic).pack(side='left',padx=(0,8))
+                cancel();self.add_printer()
+            ttk.Button(actions,text='Drucker hinzufügen…',command=add_anycubic).pack(side='left',padx=(0,8))
             test_button = ttk.Button(actions, text="Verbindung testen", command=lambda: submit(False))
             test_button.pack(side="left", padx=(0, 8))
             save_button = ttk.Button(actions, text="Verknüpfen", command=lambda: submit(True), state="disabled" if demo else "normal")
@@ -2181,6 +2231,32 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
             if chosen:
                 self.color_var.set(chosen.upper())
 
+        def show_tagwriter(self):
+            if self.busy:return
+            close=getattr(self,'close_main_page',None)
+            if close:close()
+            self.main_canvas.yview_moveto(0)
+            self.status_var.set('Lesen & Schreiben · Tag zuerst einlesen, Angaben prüfen und schreiben.')
+
+        def roll_identities(self):
+            from cfs_roll_identity import RollIdentities
+            directory=getattr(self,'data_dir',self.backup_dir)
+            if getattr(self,'demo',False):
+                if not hasattr(self,'_demo_roll_identities'):self._demo_roll_identities=RollIdentities(directory,memory=True)
+                return self._demo_roll_identities
+            return RollIdentities(directory)
+
+        def refresh_pair_status(self):
+            if not hasattr(self,'pair_status_frame'):return
+            pair=self.pair_session
+            if pair.enabled:
+                if self.pair_status_frame.winfo_manager()!='grid':self.pair_status_frame.grid()
+                for index,row in enumerate(pair.status_rows()):
+                    if self.pair_status_vars[index].get()!=row['text']:self.pair_status_vars[index].set(row['text'])
+                    style='SuccessNotice.TLabel' if row['written'] else 'ErrorNotice.TLabel' if row['error'] else 'Notice.TLabel'
+                    if str(self.pair_status_labels[index].cget('style'))!=style:self.pair_status_labels[index].configure(style=style)
+            elif self.pair_status_frame.winfo_manager()=='grid':self.pair_status_frame.grid_remove()
+
         def toggle_two_tags(self):
             # The first read after enabling imports the existing roll, even if
             # another tag was already selected before switching modes.
@@ -2189,6 +2265,7 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
 
         def reset_two_tags(self):
             self.pair_session.reset()
+            self.tag_feedback.reset()
             self.clear_tag();self.update_controls()
             self.status_var.set('Zweiermodus zurückgesetzt. Wunschwerte prüfen und Tag 1 einlesen.')
 
@@ -2221,6 +2298,8 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
             if len(spec.name) > 100:
                 raise ValueError("Die eigene Bezeichnung darf höchstens 100 Zeichen haben.")
             codec.validate_spec(spec)
+            from cfs_roll_identity import valid_serial
+            if not valid_serial(spec.serial):raise ValueError('Eine gültige sechsstellige Rollennummer eingeben oder „Neue Rolle“ wählen; 000000 ist nicht belegt.')
             return spec
 
         def length_changed(self, *_args):
@@ -2270,6 +2349,8 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
             if hasattr(self, "printer_menu"):
                 self.printer_menu.entryconfigure(0, state="disabled" if self.busy or self.close_pending else "normal")
                 self.printer_menu.entryconfigure(1, state='disabled' if demo or self.busy or self.close_pending else 'normal')
+            if hasattr(self,'add_printer_menu_index'):
+                self.printer_menu.entryconfigure(self.add_printer_menu_index,state='disabled' if self.busy or self.close_pending else 'normal')
             if hasattr(self, "profiles_menu"):
                 self.profiles_menu.entryconfigure(0, state="disabled" if self.busy or self.close_pending else "normal")
                 self.profiles_menu.entryconfigure(1, state="disabled" if demo or self.busy or self.close_pending else "normal")
@@ -2288,6 +2369,7 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
                 configure(self.port_combo,state="disabled" if connected else "readonly")
                 configure(self.refresh_button,state="disabled" if connected else "normal")
             configure(self.read_button,state="normal" if connected and not self.busy and not self.close_pending else "disabled")
+            self.refresh_pair_status()
             if getattr(self,'target_form',None) and self.target_form.update():return
             selected = self.material_by_label.get(self.material_var.get())
             set_value(self.profile_info_var,profile_values_text(selected))
@@ -2352,7 +2434,7 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
                     if hasattr(self,'slicer_sync_button'):configure(self.slicer_sync_button,state='disabled')
                     if hasattr(self,'search_entry'):
                         for widget in (self.search_entry,self.manufacturer_filter,self.nozzle_filter):configure(widget,state='disabled')
-                if pair.enabled and (self.uid and self.uid.upper() in pair.written or len(pair.written)>=2):
+                if pair.enabled and (self.uid and (self.uid.upper() in pair.written or pair.number_for(self.uid) is None) or len(pair.written)>=2):
                     configure(self.write_button,state='disabled')
                     if len(pair.written)<2:set_value(self.pair_hint_var,pair.hint()+' Dieser Tag ist bereits geschrieben – bitte den anderen auflegen.')
             feedback=getattr(self,'tag_feedback',None)
@@ -2507,16 +2589,38 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
             self.clear_tag()
             if hasattr(self,'tag_feedback'):self.tag_feedback.begin('read')
 
+            def work():
+                result=device.read_tag()
+                if not preserve:
+                    profile=(result.get('profile') or {}) if result.get('formatted') else {}
+                    uid=str(result.get('uid','')).replace(' ','').upper()
+                    from cfs_roll_identity import valid_serial
+                    existing=valid_serial(profile.get('serial'))
+                    if existing:
+                        result['_roll_serial'],result['_roll_created']=existing,False
+                        try:self.roll_identities().remember('cfs',uid,existing)
+                        except (OSError,ValueError) as error:result['_identity_error']=str(error)
+                    else:result['_roll_serial'],result['_roll_created']=self.roll_identities().resolve('cfs',uid)
+                return result
+
             def done(result):
                 uid = str(result.get("uid", "")).replace(" ", "").upper()
                 if len(uid) != 8 or any(character not in "0123456789ABCDEF" for character in uid):
                     raise ValueError("Der Reader hat keine gültige 4-Byte-UID zurückgegeben.")
                 self.uid = uid
-                if hasattr(self,'tag_feedback'):self.tag_feedback.success(uid)
+                from cfs_tag_feedback import filament_details
+                from types import SimpleNamespace
+                profile=result.get('profile') or {}
+                if result.get('formatted'):
+                    known=self.material_by_id.get(profile.get('material_id'),{})
+                    details=filament_details(SimpleNamespace(name=profile.get('name',''),color=profile.get('color','?'),weight_g=profile.get('weight_g','?'),serial=result.get('_roll_serial') or profile.get('serial') or '?'),known)
+                else:
+                    details='Kein Filamentdatensatz'+(' · Rolle '+result['_roll_serial']+' vorbereitet' if not preserve else '')
+                if hasattr(self,'tag_feedback'):self.tag_feedback.success(uid,details=details)
                 spaced_uid = " ".join(uid[index:index + 2] for index in range(0, len(uid), 2))
                 self.tag_var.set(f"UID {spaced_uid} · MIFARE Classic 1K")
                 if pair is not None:
-                    pair.read(uid)
+                    pair.read(uid,details=details)
                     if pair.enabled:
                         number=pair.number_for(uid)
                         if number is not None:self.tag_var.set(f'Tag {number} · UID {spaced_uid} · MIFARE Classic 1K')
@@ -2526,6 +2630,9 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
                     self.status_var.set(message)
                     self.log(message+f' UID {uid}.')
                     return
+                self.serial_var.set(result['_roll_serial'])
+                if result.get('_identity_error'):self.log('Rollennummer vom Tag übernommen; lokale Zuordnung nicht gespeichert: '+result['_identity_error'])
+                if result.get('_roll_created'):self.log('Tag ohne Rollennummer: '+result['_roll_serial']+' neu vergeben. Die Nummer wird beim Schreiben auf den CFS-Tag übernommen.')
                 if result.get("formatted"):
                     profile=result.get("profile") or {}
                     material_id = self.shared_roll_material(profile)
@@ -2542,11 +2649,9 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
                     if profile.get("color"):
                         self.color_var.set(normal_color(profile["color"]))
                     self.weight_var.set(str(profile["weight_g"]) if profile.get("weight_g") is not None else "")
-                    if profile.get("serial"):
-                        self.serial_var.set(str(profile["serial"]))
                     if profile.get('weight_g') is not None:
                         self.log(f"Tagmenge übernommen: {self.weight_var.get()} g / {self.length_var.get() if hasattr(self,'length_var') else 'n. a.'} m. Profilwechsel erhält Menge und Rollennummer. Dies ist die gespeicherte Tagmenge, kein bestätigter CFS-Verbrauchsmesswert.")
-                    self.remember_roll_result(uid,dict(profile,material_id=material_id))
+                    self.remember_roll_result(uid,dict(profile,material_id=material_id,serial=result['_roll_serial']))
                     self.tag_hint_var.set("Creality-Datensatz gelesen. Angaben prüfen oder für diesen Tag ändern.")
                     self.log(f"Tag {uid}: Creality-Datensatz erkannt.")
                 else:
@@ -2557,7 +2662,7 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
                     message=pair.last_event+(' Vorhandene Angaben samt Rollennummer übernommen.' if result.get('formatted') else ' Kein gültiger Creality-Datensatz; Angaben selbst einstellen.')
                     self.tag_hint_var.set(message);self.status_var.set(message);self.log(message+f' UID {uid}.')
 
-            self.run_operation("Tag wird gelesen – bitte ruhig am Reader liegen lassen…", device.read_tag, done)
+            self.run_operation("Tag wird gelesen – bitte ruhig am Reader liegen lassen…", work, done)
 
         def write_tag(self):
             if self.bridge is not None and getattr(self,"target_form",None) and self.target_form.ace:
@@ -2580,19 +2685,25 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
                 pair=getattr(self,'pair_session',None)
                 if pair is not None:pair.check_write(uid,current)
                 result=device.write_tag(uid,current,backup_dir)
+                if result.get('verified') is True:
+                    try:self.roll_identities().remember('cfs',uid,current.serial)
+                    except (OSError,ValueError) as error:result['_identity_error']=str(error)
                 result['_written_spec']=current
                 result['_fresh_material']=fresh
                 return result
             def done(result):
                 if result.get("verified") is not True:
                     raise ValueError("Die geschriebenen Daten konnten nicht vollständig bestätigt werden. Tag erneut lesen.")
-                if hasattr(self,'tag_feedback'):self.tag_feedback.success(uid,verified=True)
                 written=result['_written_spec']
                 self.remember_roll_result(uid,{'serial':written.serial,'material_id':written.material_id,'weight_g':written.weight_g})
                 pair=getattr(self,'pair_session',None)
-                if pair is not None:pair.confirmed(uid,result['_written_spec'])
+                from cfs_tag_feedback import filament_details
+                details=filament_details(written,result.get('_fresh_material') or snapshot or selected)
+                if pair is not None:pair.confirmed(uid,written,details=details)
                 if result.get('_fresh_material') is not None:
                     selected.clear();selected.update(result['_fresh_material']);self.show_material(selected)
+                if hasattr(self,'tag_feedback'):self.tag_feedback.success(uid,verified=True,details=details)
+                if result.get('_identity_error'):self.log('Tag erfolgreich geschrieben; lokale Rollenzuordnung konnte nicht gespeichert werden: '+result['_identity_error'])
                 if demo:
                     self.status_var.set("Demo-Schreibvorgang abgeschlossen. Kein echter Tag wurde verändert.")
                     self.log("Demo: Schreiben und Zurücklesen simuliert.")

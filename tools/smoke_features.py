@@ -33,11 +33,11 @@ class Registry:
  def _load(self):return {'profiles':[],'printer':deepcopy(self.printer)}
  def _cloud_snapshot(self,data,**kwargs):return deepcopy(snapshot)
 class Device:
- fail_read=False;fail_write=False
+ fail_read=False;fail_write=False;uid='11223344';profile=None
  def hello(self):return {'protocol':1,'reader_version':0x92,'firmware_version':'1.1.0','capabilities':['cfs_sector1','ntag213']}
  def read_tag(self):
   if self.fail_read:raise BridgeError('NO_TAG','Test: no tag')
-  return {'uid':'11223344','formatted':False}
+  return {'uid':self.uid,'formatted':self.profile is not None,'profile':deepcopy(self.profile)}
  def write_tag(self,uid,spec,backup):
   if self.fail_write:raise BridgeError('WRITE_FAILED','Test: interrupted')
   return {'uid':uid,'verified':True}
@@ -66,6 +66,11 @@ with tempfile.TemporaryDirectory() as directory,patch('cfs_desktop.refresh_menu_
   if '--screenshots' not in sys.argv:return
   root.update();subprocess.run(['import','-display',os.environ['DISPLAY'],'-window',str((widget or root).winfo_id()),str(Path(sys.argv[sys.argv.index('--screenshots')+1]).resolve()/name)],check=True)
  settle();idle()
+ assert app.read_button.master is app.write_button.master
+ section=app.tag_actions.master
+ assert section.cget('text')=='02   NFC-Tag lesen & schreiben'
+ assert app.label_button.master is app.tag_actions
+ assert not any(isinstance(widget,ttk.LabelFrame) and str(widget.cget('text')).startswith('04') for widget in section.master.winfo_children())
  app.port_var.set('FAKE');app.toggle_connection();idle()
  device=app.bridge
  device.fail_read=True;app.read_tag();idle();assert app.read_button.cget('text')=='Erneut lesen'
@@ -77,6 +82,32 @@ with tempfile.TemporaryDirectory() as directory,patch('cfs_desktop.refresh_menu_
   app.theme_var.set(mode);app.apply_theme(False);settle()
   for title,menu in [('Verbindung',app.printer_menu),('Profile',app.profiles_menu),('Hilfe',app.help_menu),('Einstellungen',app.settings_menu)]:
    app.navigation['toggle'](title,menu);settle();assert app.navigation['panel'].winfo_ismapped();app.navigation['close']()
+  # Direct navigation and app-styled history use the same appearance.
+  home=next(button for title,button in app.navigation['buttons'] if title=='Lesen & Schreiben')
+  home.invoke();settle();assert app.main_canvas.winfo_ismapped()
+  assert str(app.log_widget.cget('font'))=='TkDefaultFont'
+  for title,button in app.navigation['buttons']:
+   assert button.winfo_rootx()+button.winfo_width()<=root.winfo_rootx()+root.winfo_width()
+  # Both status slots persist across reading, failed writes and verified retry.
+  if app.two_tags_var.get():app.pair_check.invoke()
+  app.pair_check.invoke()
+  petg=next(item for item in codec.DEFAULT_MATERIALS if 'PETG' in item['name'].upper())
+  device.uid='11223344';device.profile={'material_id':petg['id'],'serial':'123456','color':'#112233','weight_g':825}
+  app.read_tag();idle();assert app.serial_var.get()=='123456'
+  app.write_tag();idle();assert app.pair_session.status_rows()[0]['written']
+  first=app.pair_status_vars[0].get()
+  device.uid='AABBCCDD';device.profile={'material_id':'00001','serial':'654321','color':'#FFFFFF','weight_g':500}
+  app.read_tag();idle();assert app.serial_var.get()=='123456' and app.weight_var.get()=='825'
+  assert app.pair_status_vars[0].get()==first
+  assert app.pair_session.status_rows()[1]['read'] and not app.pair_session.status_rows()[1]['written']
+  device.fail_write=True;app.write_tag();idle();assert app.pair_status_vars[0].get()==first
+  assert app.pair_session.status_rows()[1]['error'] and not app.pair_session.status_rows()[1]['written']
+  device.fail_write=False;app.write_tag();idle()
+  assert all(row['written'] and row['read'] and not row['error'] for row in app.pair_session.status_rows())
+  for text in ('PETG','#112233','825 g','123456'):assert text in app.tag_result_var.get(),app.tag_result_var.get()
+  shot('two-tags-'+mode+'.png')
+  app.main_canvas.yview_moveto(1);settle();shot('history-'+mode+'.png');app.main_canvas.yview_moveto(0)
+  app.pair_check.invoke();device.uid='11223344';device.profile=None
   shot('main-'+mode+'.png')
   app.choose_printer();settle();chooser=app.printer_dialog_fields
   label=next(str(value) for value in app.printer_dialog.winfo_children()[0].winfo_children() if isinstance(value,ttk.Combobox))
@@ -108,9 +139,13 @@ with tempfile.TemporaryDirectory() as directory,patch('cfs_desktop.refresh_menu_
   app.read_tag();idle();assert app.uid==nt.uid
   app.id_var.set('EXAMPLE-01');app.weight_var.set('817');app.write_tag();idle()
   assert len(app.pair_session.written)==1,app.status_var.get()
+  ace_first=app.pair_status_vars[0].get()
   nt.uid='04776655443322';nt.memory[124:128]=(300).to_bytes(4,'little')
   app.read_tag();idle();assert app.weight_var.get()=='817'
+  assert app.pair_status_vars[0].get()==ace_first and not app.pair_session.status_rows()[1]['written']
   app.write_tag();idle();assert len(app.pair_session.written)==2,app.status_var.get()
+  assert all(row['written'] and row['read'] for row in app.pair_session.status_rows())
+  assert '817 g' in app.tag_result_var.get() and 'lokal' in app.tag_result_var.get()
   app.main_canvas.yview_moveto(1);settle();shot('anycubic-'+mode+'.png');app.main_canvas.yview_moveto(0)
   assert 'Experimentell' in a.notice.get()
   # A printer change clears both the target UID and the two-tag payload.
@@ -185,26 +220,60 @@ with tempfile.TemporaryDirectory() as directory,patch('cfs_desktop.refresh_menu_
   app.bridge=reader
   # App update page uses background operations and preserves the selected tag.
   from cfs_versions import APP_VERSION
+  # New printer setup uses one brand/model form without network or keyring work.
+  app.add_printer_button.invoke();settle();adder=app.add_printer_fields
+  adder['values']['manufacturer'].set('Anycubic');adder['fields']['manufacturer'].event_generate('<<ComboboxSelected>>');settle()
+  assert 'Kobra S1' in adder['fields']['model'].cget('values')
+  adder['values']['model'].set('Kobra S1');adder['fields']['model'].event_generate('<<ComboboxSelected>>');settle()
+  assert adder['fields']['feeder'].winfo_ismapped()
+  adder['values']['manufacturer'].set('Creality');adder['fields']['manufacturer'].event_generate('<<ComboboxSelected>>');settle()
+  assert not adder['fields']['feeder'].winfo_ismapped()
+  adder['values']['model'].set('Hi');adder['fields']['model'].event_generate('<<ComboboxSelected>>');settle()
+  adder['values']['name'].set('Synthetic Hi');adder['values']['ip'].set('10.0.0.77' if mode=='light' else '10.0.0.78')
+  shot('add-printer-'+mode+'.png',adder['window']);adder['save'].invoke();settle()
+  assert 'Hi' in app.printer_model_filter.cget('values')
+  app.printer_brand_filter_var.set('Anycubic');settle();assert 'Hi' not in app.printer_model_filter.cget('values')
+  app.clear_material_filters();settle()
   selected_uid=app.uid;selected_amount=app.weight_var.get()
   app.show_app_updates();settle();fields=app.update_page_fields
+  assert fields['history'] is not None
+  assert not any(isinstance(widget,ttk.Button) and widget.cget('text')=='Was ist neu?' for widget in fields['search'].master.winfo_children())
+  assert '**' not in fields['notes'].get('1.0','end')
   with patch('cfs_update_ui.check_release',side_effect=ValueError('Simulated offline')):
    fields['search'].invoke();idle();assert 'Simulated offline' in fields['status'].get()
   offered={'available':True,'version':'99.0.0','size':1024,'notes':'Synthetic release notes'}
   with patch('cfs_update_ui.check_release',return_value=offered):
    fields['search'].invoke();idle();assert '99.0.0 verfügbar' in fields['status'].get()
+  older=next(value for value in fields['history'].cget('values') if value=='3.7.0')
+  fields['history_selection'].set(older);fields['history'].event_generate('<<ComboboxSelected>>');settle()
+  assert '3.7.0' in fields['notes'].get('1.0','end')
+  assert fields['state']['release']['version']=='99.0.0'
   with patch('cfs_update_ui.stage_release',side_effect=ValueError('Simulated checksum error')):
    fields['install'].invoke();idle();assert 'erneut' in fields['install'].cget('text')
   with patch('cfs_update_ui.stage_release',return_value={'version':'99.0.0'}):
    fields['install'].invoke();idle();assert 'neu starten' in fields['install'].cget('text')
   assert app.uid==selected_uid and app.weight_var.get()==selected_amount
   shot('app-updates-'+mode+'.png');app.close_main_page();settle()
-  notes_window=app.show_release_notes();settle();assert 'Was ist neu?' in notes_window.title();notes_window.destroy()
+  notes_window=app.show_release_notes();settle();assert 'Was ist neu?' in notes_window.title()
+  notes_fields=app.release_notes_fields
+  assert notes_fields['selector'] is not None
+  from cfs_update_ui import show_notes
+  notes_window.destroy();notes_window=show_notes(app,tk,ttk,automatic=True);settle()
+  for size in ('800x600','560x400'):
+   notes_window.geometry(size);settle()
+   button=app.release_notes_fields['close']
+   assert button.winfo_height()>=40
+   assert button.winfo_rooty()+button.winfo_height()<=notes_window.winfo_rooty()+notes_window.winfo_height()-10
+   assert '**' not in app.release_notes_fields['text'].get('1.0','end')
+  shot('patchnotes-small-'+mode+'.png',notes_window)
+  button.invoke();settle()
+  assert json.loads((Path(directory)/'app-update-seen.json').read_text())['version']==APP_VERSION
   from cfs_labels import document
   from cfs_label_ui import show
   docs=[document(profile,registry.printer)]
   show(app,tk,ttk,dialogs,docs);settle(.3);shot('labels-'+mode+'.png');app.close_main_page();settle()
  ConnectionStore(directory).remember('Test ACE','10.0.0.3',model='Anycubic Kobra S1',feeder_id='ace2_pro',feeder_variant='s1_x')
- app.show_anycubic(printer=ConnectionStore(directory).choices()[0]);settle()
+ app.show_anycubic(printer=next(item for item in ConnectionStore(directory).choices() if item['ip']=='10.0.0.3'));settle()
  assert app.target_form.target_config()['feeder_id']=='ace2_pro'
  assert app.target_form.target_config()['variant']=='s1_x'
  assert app.main_canvas.winfo_ismapped()

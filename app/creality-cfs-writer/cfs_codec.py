@@ -53,7 +53,7 @@ class TagSpec:
 
 
 def new_serial() -> str:
-    return f"{secrets.randbelow(900_000):06d}"
+    return f"{secrets.randbelow(899_999)+1:06d}"
 
 
 def validate_spec(spec: TagSpec) -> None:

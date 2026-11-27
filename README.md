@@ -4,7 +4,7 @@ Desktop-Werkzeug für eigene Filamentprofile und RFID-Aufkleber an Creality-CFS-
 Die Anwendung liest und beschreibt MIFARE-Classic-Tags über einen Arduino,
 verwaltet die Zuordnung zum Filamentprofil und erzeugt 40 × 30 mm Swatch-Etiketten.
 
-**App 3.7.0 · Druckerdienst 2.1.0 · Arduino-Bridge 1.1.0**
+**App 3.8.1 · Druckerdienst 2.1.0 · Arduino-Bridge 1.1.0**
 
 Eigener Projektcode ist unter **PolyForm Noncommercial 1.0.0** verfügbar.
 Nichtkommerzielle Nutzung, Änderungen und Weitergabe sind nach den
@@ -14,8 +14,14 @@ deren eigenen Lizenzen. Die vollständigen Bedingungen stehen in
 
 Das Projekt bietet folgende Funktionen.
 
+- Gemeinsamer Knopf „Drucker hinzufügen“ mit Marken-/Modellwahl; eingerichtete
+  Druckertypen auch in der Filament-Profilsuche filtern.
+- Lesbare Patchnotes und offline verfügbare Versionshistorie auf der Update-Seite.
 - Arduino Mega2560 R3 und Nano Classic ATmega328P mit RC522 über USB.
+- Eigener Menüpunkt Lesen & Schreiben; Verlauf im gewählten App-Design.
 - Materialcode, Farbe, Rollennummer und Restmenge lesen und geprüft schreiben.
+  Bestehende Rollennummern erhalten; fehlende automatisch vergeben und pro Tag merken.
+- Im Zwei-Tag-Modus getrennte Lese-/Schreibbestätigungen mit Filament, Farbe, Gramm.
 - Optional zwei Tags derselben Spule nacheinander mit einem Leser beschreiben.
 - Gespeicherte Slicerprofile abgleichen, neue Materialcodes vergeben und
   geänderte Werte mit Vorschau übernehmen. Gespeicherte Slicerwerte haben Vorrang.

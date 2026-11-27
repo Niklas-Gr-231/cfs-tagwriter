@@ -1,5 +1,43 @@
 # Änderungen
 
+**3.8.1 · 27.11.2026 · Lesen und Schreiben gemeinsam in Punkt 02**
+
+- „Tag lesen“ und „Tag schreiben“ stehen gemeinsam in „02 NFC-Tag lesen & schreiben“.
+- Schreibvorschau, Hinweise, Ergebnisse und beide Tag-Statusfelder bleiben dort zusammen.
+- Die separate Schreibsektion unten entfällt. Etiketten für das gewählte Filament
+  lassen sich weiterhin direkt im gemeinsamen Aktionsbereich öffnen.
+- Druckerdienst bleibt 2.1.0, Arduino-Bridge bleibt 1.1.0.
+
+**3.8.0 · 27.11.2026 · Tag-Status und stabile Rollennummern**
+
+- Eigener oberer Menüpunkt „Lesen & Schreiben“, mit direktem Rückweg von Unterseiten.
+- Verlauf in derselben Optik wie die App: normale Schrift, Themenfarben und Abstände.
+- Zwei-Tag-Modus mit zwei getrennten, dauerhaft sichtbaren Statusfeldern für
+  Lesen und geprüftes Schreiben, Zeitstempel und Filamentdaten.
+- Ein Fehler an Tag 2 verändert die bestätigte Anzeige von Tag 1 nicht. Ein
+  dritter Tag kann nicht versehentlich in die Zweiergruppe geschrieben werden.
+- Vorhandene Rollennummern bleiben beim erneuten Schreiben bestehen. Fehlt eine
+  Nummer (auch 000000), wird automatisch eine freie Nummer lokal vorgemerkt.
+  Erneutes Lesen desselben unbeschriebenen Tags behält diese Nummer.
+- Grüne Erfolgsanzeigen enthalten Filamenttyp, Bezeichnung, Farbe und Gramm.
+- Lokale Zuordnung auch für ACE-Tags ohne natives Rollennummernfeld. Keine
+  zusätzliche Cloud-/Druckersynchronisierung und keine Änderung am Tagformat.
+- Druckerdienst bleibt 2.1.0, Arduino-Bridge bleibt 1.1.0.
+
+**3.7.1 · 27.11.2026 · Lesbare Patchnotes und Patch-Historie**
+
+- Patchnotes mit normaler Schrift, klaren Überschriften und lesbaren Listen;
+  Markdown-Markierungen und harte Zeilenumbrüche werden nicht mehr angezeigt.
+- „Verstanden“ und „Schließen“ verwenden die vorhandenen großen Schaltflächen.
+  Der Fußbereich bleibt auch bei verkleinertem Fenster vollständig sichtbar.
+- Auf der Update-Seite ersetzt eine Versionsauswahl den zusätzlichen
+  „Was ist neu?“-Knopf. Frühere Patchnotes sind offline als Historie enthalten.
+- Das einmalige Fenster nach einem Update und der Eintrag unter Hilfe bleiben.
+  Historie und verfügbare Aktualisierung werden unabhängig voneinander gewählt.
+- Allgemeiner Knopf „Drucker hinzufügen“ mit Marken- und Modellwahl. Alle
+  eingerichteten Druckertypen stehen auch in den Filament-Profilfiltern bereit.
+- Druckerdienst bleibt 2.1.0, Arduino-Bridge bleibt 1.1.0.
+
 **3.7.0 · 27.11.2026 · Installationspakete und App-Updates**
 
 - Gemeinsame Update-Seite unter Einstellungen: freigegebene stabile GitHub-Version
@@ -122,4 +160,3 @@
 - Tatsächliche Dienstdateien und laufenden Prozess prüfen.
 - Profilverwaltung, Zwei-Tag-Modus, Etikettenexport, Direktdruck und helle bzw.
   dunkle Darstellung stammen aus dem bisherigen Projektstand.
-

@@ -9,21 +9,26 @@ def mount(app, parent, tk, ttk, menus):
     panel = ttk.Frame(frame, padding=10, style='Card.TFrame')
     state = {'open': None}
     controls = []
+    actions = dict(menus)
 
     def close(_event=None):
         panel.grid_remove()
         state['open'] = None
         for title, button in controls:
-            button.configure(text=title+' ▾')
+            button.configure(text=title+(' ▾' if not callable(actions[title]) else ''))
 
     def toggle(title, menu):
+        if callable(menu):
+            close()
+            if not app.busy:menu()
+            return
         if app.busy or state['open'] == title:
             close()
             return
         close()
         state['open'] = title
         for name, button in controls:
-            button.configure(text=name+(' ▴' if name == title else ' ▾'))
+            button.configure(text=name+(' ▴' if name == title else ' ▾') if not callable(actions[name]) else name)
         for child in panel.winfo_children():
             child.destroy()
         last = menu.index('end')
@@ -41,7 +46,7 @@ def mount(app, parent, tk, ttk, menus):
 
     for column, (title, menu) in enumerate(menus):
         buttons.columnconfigure(column, weight=1, uniform='navigation')
-        button = ttk.Button(buttons, text=title+' ▾', style='Write.TButton',
+        button = ttk.Button(buttons, text=title+(' ▾' if not callable(menu) else ''), style='Write.TButton',
                             command=lambda title=title, menu=menu: toggle(title, menu))
         button.grid(row=0, column=column, sticky='ew', padx=(0, 8 if column < len(menus)-1 else 0))
         controls.append((title, button))

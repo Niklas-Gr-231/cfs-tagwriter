@@ -1,4 +1,4 @@
-# Prüfstand der Git-Ausgabe 3.7.0
+# Prüfstand der Git-Ausgabe 3.8.1
 
 Am 26.11.2026 wurde die Git-Ausgabe lokal auf Linux mit Python 3.12 in einer
 frischen virtuellen Umgebung geprüft. Die Installation erfolgte ausschließlich
@@ -156,3 +156,30 @@ Native Pakete werden vor der Veröffentlichung auf allen vier Zielplattformen
 gebaut und mit eingebauter Laufzeit, liblzma und Demofenster geprüft.
 Die jeweils konkreten erfolgreichen Läufe stehen unter GitHub Actions.
 Diese Tests bedienen keine realen Drucker, Arduino-Boards oder Bluetooth-Geräte.
+
+## Patchnotes und gemeinsame Druckeranlage 3.7.1
+
+Normaler Textsatz statt roher Markdown-Quelltexte. Ein realer Tk-Test prüft den
+vollständig sichtbaren Schließen-/Verstanden-Knopf bei 800 × 600 und 560 × 400,
+beide Designs, Versionshistorie und von der Historie unabhängige Update-Auswahl.
+Die gemeinsame Druckeranlage prüft Marken-/Modellwahl, Offline-Speichern,
+passende Filamentwechsler, IP-Duplikate und den unveränderten aktiven Drucker.
+Druckerfilter enthalten eingerichtete Druckertypen ohne Hintergrundabfragen.
+
+## Tag-Status und Rollenzuordnung 3.8.0
+
+Tests prüfen das Wiederlesen leerer Tags und vorhandener Rollennummern,
+UID-Zuordnung über Neustarts, Vermeidung bekannter Nummern, zwei getrennte
+Statusfelder sowie Fehler und Wiederholung an Tag 2. In der realen Tk-Oberfläche
+werden CFS und ACE mit simulierten Tags in beiden Designs geprüft. Erfolg wird
+nur nach bestätigtem Zurücklesen angezeigt; Metadaten sind ein Schnappschuss der
+Schreibwerte. Ein Fehler beim optionalen lokalen Merken ändert einen bestätigten
+Schreiberfolg nicht in einen Schreibfehler. Gültige native Rollennummern bleiben
+auch bei beschädigter optionaler Zuordnungsdatei lesbar.
+
+## Gemeinsame Tag-Aktionen 3.8.1
+
+Die Oberflächenprüfung stellt sicher, dass Lesen und Schreiben dieselbe
+Aktionsleiste in Abschnitt 02 verwenden, Etiketten erreichbar bleiben und
+keine separate Sektion 04 mehr angezeigt wird. Die bestehenden Lese-/Schreib-
+und Zweiermodus-Prüfungen für CFS und ACE laufen in beiden Designs weiter.
