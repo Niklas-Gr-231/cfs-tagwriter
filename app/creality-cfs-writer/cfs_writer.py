@@ -2378,6 +2378,9 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
             fields=getattr(self,'setup_fields',{})
             if fields.get('window') is not None and fields['window'].winfo_exists():
                 fields['progress_text'].set(describe(update));bars.append(fields['progress'])
+            page=getattr(self,'update_page_fields',{})
+            if page.get('window') is not None and page['window'].winfo_exists():
+                page['progress_text'].set(describe(update));bars.append(page['progress'])
             current,total=update.get('current'),update.get('total')
             known=isinstance(current,(int,float)) and isinstance(total,(int,float)) and total>0
             for bar in bars:
@@ -2391,6 +2394,9 @@ def make_application(tk, ttk, dialogs, codec, bridge_factory, list_ports, demo=F
             if fields.get('window') is not None and fields['window'].winfo_exists():
                 fields['progress_text'].set('Abgeschlossen' if success else 'Fehlgeschlagen – Meldung beachten')
                 bars.append(fields['progress'])
+            page=getattr(self,'update_page_fields',{})
+            if page.get('window') is not None and page['window'].winfo_exists():
+                page['progress_text'].set('Abgeschlossen' if success else 'Fehlgeschlagen – Meldung beachten');bars.append(page['progress'])
             for bar in bars:
                 bar.stop();bar.configure(mode='determinate',maximum=1,value=1 if success else 0)
 

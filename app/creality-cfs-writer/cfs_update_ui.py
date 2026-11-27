@@ -58,6 +58,9 @@ def show_updates(app,tk,ttk,dialogs):
     ttk.Label(card,text='Freigegebene GitHub-Versionen · Einstellungen und Profile bleiben erhalten.\nDruckerdienst und Arduino werden separat und nur auf deinen Wunsch aktualisiert.',wraplength=850).pack(anchor='w',pady=(10,20))
     status=tk.StringVar(value='Zum Prüfen auf „Nach Updates suchen“ klicken.')
     ttk.Label(card,textvariable=status,wraplength=850).pack(anchor='w',pady=10)
+    progress_text=tk.StringVar(value='')
+    ttk.Label(card,textvariable=progress_text,wraplength=850).pack(anchor='w')
+    progress=ttk.Progressbar(card,mode='determinate');progress.pack(fill='x',pady=(6,10))
     controls=ttk.Frame(card);controls.pack(fill='x',pady=10)
     state={'release':None,'receipt':None}
     note_frame=ttk.Frame(card);note_frame.pack(fill='both',expand=True,pady=12)
@@ -111,5 +114,5 @@ def show_updates(app,tk,ttk,dialogs):
     search=ttk.Button(controls,text='Nach Updates suchen',command=search_updates,style='Primary.TButton');search.pack(side='left')
     install=ttk.Button(controls,text='Update herunterladen',command=download,state='disabled');install.pack(side='left',padx=12)
     ttk.Button(controls,text='Was ist neu?',command=lambda:show_notes(app,tk,ttk)).pack(side='left')
-    app.update_page_fields={'search':search,'install':install,'status':status,'state':state,'notes':notes}
+    app.update_page_fields={'search':search,'install':install,'status':status,'state':state,'notes':notes,'window':card,'progress':progress,'progress_text':progress_text}
     app.apply_theme(persist=False)

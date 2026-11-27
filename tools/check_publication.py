@@ -9,7 +9,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 FORBIDDEN_DIRECTORIES = {'state', 'backups', 'userdata', 'data', 'python-libs', 'label-python-libs', 'arduino-tools', '.venv', '__pycache__'}
-FORBIDDEN_NAMES = {'printer-connections.json', 'profil-zuordnung.json', 'known_hosts', 'ui-settings.json', 'label-printer.json', 'fleet.json', 'slicer-sync-settings.json', 'slicer-source-identities.json', 'printer-firmware.json', 'printer-services.json', 'fleet.json', 'label-preferences.json'}
+FORBIDDEN_NAMES = {'printer-connections.json', 'profil-zuordnung.json', 'known_hosts', 'ui-settings.json', 'label-printer.json', 'fleet.json', 'slicer-sync-settings.json', 'slicer-source-identities.json', 'printer-firmware.json', 'printer-services.json', 'fleet.json', 'label-preferences.json', 'app-update.json', 'app-update-seen.json', 'receipt.json'}
 REQUIRED = ('LICENSE', 'NOTICE', 'THIRD_PARTY_NOTICES.md', 'README.md', 'requirements.txt', 'start.py',
             'docs/GITHUB-BESCHREIBUNG.md', 'docs/INSTALLATION.md', 'docs/RECHTLICHES.md', '.gitignore')
 

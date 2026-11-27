@@ -45,3 +45,10 @@ receipt*.json
 
 printer-services.json
 fleet.json
+
+app-update*.json
+updates/
+*.AppImage
+*.exe
+*.dmg
+*.pkg

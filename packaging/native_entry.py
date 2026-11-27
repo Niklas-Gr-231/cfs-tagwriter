@@ -29,7 +29,7 @@ import certifi
 
 def main():
     root=Path(getattr(sys,'_MEIPASS',Path(__file__).resolve().parents[1]))
-    os.environ.setdefault('SSL_CERT_FILE',certifi.where())
+    os.environ['SSL_CERT_FILE']=certifi.where()
     for path in sorted((root/'native-libs').glob('*lzma*')):
         os.environ.setdefault('CFS_LIBLZMA',str(path));break
     source=runpy.run_path(str(root/'start.py'))
@@ -37,6 +37,13 @@ def main():
     if '--check' in arguments:
         buffer=io.StringIO()
         with contextlib.redirect_stdout(buffer):result=source['main'](['--check'])
+        from cfs_samples import sample_bytes
+        sample_bytes()
+        from PIL import Image
+        writer=root/'app/creality-cfs-writer'
+        for name in ('cfs-tagwriter.png','printer-generic.png','tag-position.png'):
+            with Image.open(writer/name) as image:image.verify()
+        from cfs_labels import document
         if '--report-file' in arguments:
             path=Path(arguments[arguments.index('--report-file')+1]);path.parent.mkdir(parents=True,exist_ok=True)
             path.write_text(buffer.getvalue(),encoding='utf-8')
@@ -59,5 +66,10 @@ if __name__=='__main__':
     try:raise SystemExit(main())
     except Exception as error:
         if sys.stderr is not None:raise
+        if '--check' in sys.argv or '--smoke-test' in sys.argv:
+            if '--report-file' in sys.argv:
+                path=Path(sys.argv[sys.argv.index('--report-file')+1]);path.parent.mkdir(parents=True,exist_ok=True)
+                path.write_text(json.dumps({'error':str(error)}),encoding='utf-8')
+            raise SystemExit(1)
         tkinter.messagebox.showerror('CFS Tagwriter konnte nicht starten',str(error))
         raise SystemExit(1)

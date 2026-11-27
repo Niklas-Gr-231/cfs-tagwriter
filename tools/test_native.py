@@ -3,6 +3,8 @@
 """Probe actual packaged dependencies, offline exports, and the real demo window."""
 import argparse
 import json
+import hashlib
+from unittest.mock import patch
 import os
 from pathlib import Path
 import runpy
@@ -11,7 +13,7 @@ import sys
 import tempfile
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'app/creality-cfs-writer'))
-from cfs_updates import _extract_mac,launch_environment
+from cfs_updates import _extract_mac,launch_environment,stage_release,platform_key,asset_name,REPOSITORY,launch_updated
 
 
 def check(package,gui=True):
@@ -24,6 +26,16 @@ def check(package,gui=True):
         result=json.loads(report.read_text(encoding='utf-8'))
         assert result['app']==version and result['dependencies']=='ready',result
         assert result['optional_direct_print_compression']=='bereit',result
+        # Exercise the actual staged updater and new executable's start probe.
+        key=platform_key();name=asset_name(version,key)
+        offered={'version':version,'key':key,'name':name,'size':package.stat().st_size,'sha256':hashlib.sha256(package.read_bytes()).hexdigest(),'url':'https://github.com/'+REPOSITORY+'/releases/download/v'+version+'/'+name,'notes':'Native updater integration test'}
+        with patch('cfs_updates._open',side_effect=lambda url:package.open('rb')):
+            receipt=stage_release(offered,data)
+        assert not (data/'app-update.json').exists()
+        with patch('cfs_updates.subprocess.Popen') as launch:
+            launch_updated(receipt,data,True)
+            assert launch.call_args.args[0][0]==receipt['executable']
+        assert json.loads((data/'app-update.json').read_text(encoding='utf-8'))['version']==version
         if gui:subprocess.run([str(executable),'--smoke-test'],check=True,timeout=45,env=env)
         print('Natives Paket erfolgreich geprüft:',result)
 

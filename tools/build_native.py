@@ -107,7 +107,7 @@ def build(work,output):
                 if isinstance(node,ast.Import):hidden.update(item.name for item in node.names)
                 elif isinstance(node,ast.ImportFrom) and node.module and not node.level:hidden.add(node.module)
     hidden=sorted(name for name in hidden if name.split('.')[0] not in own and name.split('.')[0] not in ('pytest','unittest','pip','setuptools','test','tests'))
-    common=f"a=Analysis([{str(ROOT/'packaging/native_entry.py')!r}],pathex=[],binaries=[({str(lib)!r},'native-libs')],datas={datas!r},hiddenimports={hidden!r}+collect_submodules('keyring.backends')+collect_submodules('bleak.backends')+collect_submodules('PIL')+collect_submodules('serial.tools')+collect_submodules('tkinter')+['xml.etree.ElementTree','concurrent.futures.thread'],hookspath=[],runtime_hooks=[],excludes=['pytest','unittest','pip','setuptools','wheel','cmake'],noarchive=False)\npyz=PYZ(a.pure)\n"
+    common=f"a=Analysis([{str(ROOT/'packaging/native_entry.py')!r}],pathex=[],binaries=[({str(lib)!r},'native-libs')],datas={datas!r},hiddenimports={hidden!r}+collect_submodules('keyring.backends')+collect_submodules('bleak.backends')+collect_submodules('PIL')+collect_submodules('serial.tools')+collect_submodules('tkinter')+['xml.etree.ElementTree','concurrent.futures.thread'],hookspath=[],runtime_hooks=[],excludes=['pytest','pip','setuptools','wheel','cmake'],noarchive=False)\npyz=PYZ(a.pure)\n"
     if sys.platform=='win32':
         end=f"exe=EXE(pyz,a.scripts,a.binaries,a.datas,[],name='CFS Tagwriter',console=False,icon={str(ROOT/'app/creality-cfs-writer/cfs-tagwriter.ico')!r})\n"
     else:
